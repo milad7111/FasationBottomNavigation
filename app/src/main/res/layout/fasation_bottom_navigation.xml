@@ -12,11 +12,10 @@
         android:background="@drawable/bottom_sheet_background"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <ImageButton
-        android:id="@+id/img_first"
-        android:layout_width="69dp"
+    <ImageSwitcher
+        android:id="@+id/img_sch_navigation_items_switcher_first"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:background="@color/transparent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_first_image_view"
@@ -24,14 +23,14 @@
         android:paddingBottom="8dp"
         android:src="@drawable/home_selected_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline1" />
+        app:layout_constraintEnd_toStartOf="@+id/img_sch_navigation_items_switcher_second"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/empty_layout" />
 
-    <ImageButton
-        android:id="@+id/img_second"
-        android:layout_width="69dp"
+    <ImageSwitcher
+        android:id="@+id/img_sch_navigation_items_switcher_second"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="8dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_second_image_view"
@@ -39,13 +38,14 @@
         android:paddingBottom="8dp"
         android:src="@drawable/near_me_selected_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/img_first" />
+        app:layout_constraintEnd_toStartOf="@+id/img_sch_navigation_items_switcher_third"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_sch_navigation_items_switcher_first" />
 
-    <ImageButton
-        android:id="@+id/img_third"
-        android:layout_width="70dp"
+    <ImageSwitcher
+        android:id="@+id/img_sch_navigation_items_switcher_third"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="8dp"
         android:background="@color/transparent"
         android:clickable="true"
@@ -54,13 +54,14 @@
         android:paddingBottom="25dp"
         android:src="@drawable/magnify_selected_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/img_second" />
+        app:layout_constraintEnd_toStartOf="@+id/img_sch_navigation_items_switcher_fourth"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_sch_navigation_items_switcher_second" />
 
-    <ImageButton
-        android:id="@+id/img_fourth"
-        android:layout_width="69dp"
+    <ImageSwitcher
+        android:id="@+id/img_sch_navigation_items_switcher_fourth"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="8dp"
         android:background="@color/transparent"
         android:clickable="true"
@@ -69,44 +70,14 @@
         android:paddingBottom="8dp"
         android:src="@drawable/heart_selected_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/img_third" />
-
-    <!--<ImageButton-->
-    <!--android:id="@+id/img_fifth"-->
-    <!--android:layout_width="70dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:background="@color/transparent"-->
-    <!--android:clickable="true"-->
-    <!--android:contentDescription="@string/image_view_content_description_fifth_image_view"-->
-    <!--android:focusable="true"-->
-    <!--android:paddingBottom="8dp"-->
-    <!--android:src="@drawable/pencil_selected_24"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toStartOf="@+id/guideline2"-->
-    <!--app:layout_constraintStart_toEndOf="@+id/img_fourth" />-->
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="8dp" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="8dp" />
+        app:layout_constraintEnd_toStartOf="@+id/img_sch_navigation_items_switcher_fifth"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_sch_navigation_items_switcher_third" />
 
     <ImageSwitcher
         android:id="@+id/img_sch_navigation_items_switcher_fifth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:background="@color/transparent"
@@ -116,7 +87,22 @@
         android:paddingBottom="8dp"
         android:src="@drawable/pencil_selected_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toEndOf="@+id/img_fourth" />
+        app:layout_constraintEnd_toEndOf="@+id/empty_layout"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_sch_navigation_items_switcher_fourth" />
+
+    <!--<android.support.constraint.Guideline-->
+    <!--android:id="@+id/guideline1"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical"-->
+    <!--app:layout_constraintGuide_begin="8dp" />-->
+
+    <!--<android.support.constraint.Guideline-->
+    <!--android:id="@+id/guideline2"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical"-->
+    <!--app:layout_constraintGuide_end="8dp" />-->
 
 </android.support.constraint.ConstraintLayout>

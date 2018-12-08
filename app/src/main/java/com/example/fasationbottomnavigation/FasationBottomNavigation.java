@@ -35,6 +35,8 @@ public class FasationBottomNavigation extends ConstraintLayout {
     //region Declare Objects
     private Context context;
 
+    private ViewSwitcher.ViewFactory imageSwitcherFactory;
+
     Animation fadeInAnimation;
     Animation fadeOutAnimation;
 
@@ -47,6 +49,11 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Views
     View rootView;
+
+    ImageSwitcher imgSchNavigationItemsSwitcherFirst;
+    ImageSwitcher imgSchNavigationItemsSwitcherSecond;
+    ImageSwitcher imgSchNavigationItemsSwitcherThird;
+    ImageSwitcher imgSchNavigationItemsSwitcherFourth;
     ImageSwitcher imgSchNavigationItemsSwitcherFifth;
 
     ImageButton firstCustomItemView;
@@ -88,113 +95,114 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     private void init(final Context context) {
 
+        imageSwitcherFactory = new ViewSwitcher.ViewFactory() {
+            @Override
+            public View makeView() {
+                return new ImageView(context);
+            }
+        };
+
         fadeInAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
         fadeOutAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
 
         rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
 
-        imgSchNavigationItemsSwitcherFifth = rootView.findViewById(R.id.img_sch_navigation_items_switcher_fifth);
-        imgSchNavigationItemsSwitcherFifth.setFactory(new ViewSwitcher.ViewFactory() {
-            @Override
-            public View makeView() {
-                return new ImageView(context);
-            }
-        });
-        imgSchNavigationItemsSwitcherFifth.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pencil_selected_24));
-        imgSchNavigationItemsSwitcherFifth.setInAnimation(fadeInAnimation);
-//        imgSchNavigationItemsSwitcherFifth.setOutAnimation(fadeOutAnimation);
-
-        firstCustomItemView = rootView.findViewById(R.id.img_first);
-        secondCustomItemView = rootView.findViewById(R.id.img_second);
-        thirdCustomItemView = rootView.findViewById(R.id.img_third);
-        fourthCustomItemView = rootView.findViewById(R.id.img_fourth);
-//        fifthCustomItemView = rootView.findViewById(R.id.img_fifth);
-
         emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
 
-        firstCustomItemView.setOnClickListener(new View.OnClickListener() {
+        imgSchNavigationItemsSwitcherFirst = rootView.findViewById(R.id.img_sch_navigation_items_switcher_first);
+        imgSchNavigationItemsSwitcherSecond = rootView.findViewById(R.id.img_sch_navigation_items_switcher_second);
+        imgSchNavigationItemsSwitcherThird = rootView.findViewById(R.id.img_sch_navigation_items_switcher_third);
+        imgSchNavigationItemsSwitcherFourth = rootView.findViewById(R.id.img_sch_navigation_items_switcher_fourth);
+        imgSchNavigationItemsSwitcherFifth = rootView.findViewById(R.id.img_sch_navigation_items_switcher_fifth);
+
+        imgSchNavigationItemsSwitcherFirst.setFactory(imageSwitcherFactory);
+        imgSchNavigationItemsSwitcherSecond.setFactory(imageSwitcherFactory);
+        imgSchNavigationItemsSwitcherThird.setFactory(imageSwitcherFactory);
+        imgSchNavigationItemsSwitcherFourth.setFactory(imageSwitcherFactory);
+        imgSchNavigationItemsSwitcherFifth.setFactory(imageSwitcherFactory);
+
+        imgSchNavigationItemsSwitcherFirst.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.home_selected_24));
+        imgSchNavigationItemsSwitcherSecond.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.near_me_selected_24));
+        imgSchNavigationItemsSwitcherThird.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.magnify_selected_24));
+        imgSchNavigationItemsSwitcherFourth.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.heart_selected_24));
+        imgSchNavigationItemsSwitcherFifth.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pencil_selected_24));
+
+        imgSchNavigationItemsSwitcherFirst.setInAnimation(fadeInAnimation);
+        imgSchNavigationItemsSwitcherSecond.setInAnimation(fadeInAnimation);
+        imgSchNavigationItemsSwitcherThird.setInAnimation(fadeInAnimation);
+        imgSchNavigationItemsSwitcherFourth.setInAnimation(fadeInAnimation);
+        imgSchNavigationItemsSwitcherFifth.setInAnimation(fadeInAnimation);
+
+//        imgSchNavigationItemsSwitcherFirst.setOutAnimation(fadeOutAnimation);
+//        imgSchNavigationItemsSwitcherSecond.setOutAnimation(fadeOutAnimation);
+//        imgSchNavigationItemsSwitcherThird.setOutAnimation(fadeOutAnimation);
+//        imgSchNavigationItemsSwitcherFourth.setOutAnimation(fadeOutAnimation);
+//        imgSchNavigationItemsSwitcherFifth.setOutAnimation(fadeOutAnimation);
+
+        imgSchNavigationItemsSwitcherFirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lastSelectedIndex = newSelectedIndex;
-                newSelectedIndex = 0;
-                prepareDeSelectItemAnimation();
-                prepareSelectItemAnimation(view);
-                prepareCollapseItemAnimation();
-                setLastSelectedItemImage();
-                setNewSelectedItemImage();
-                runAnimationOnClickItem();
+                if (newSelectedIndex != 0) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 0;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation(view);
+                    runAnimationOnClickItem();
+                }
             }
         });
 
-        secondCustomItemView.setOnClickListener(new View.OnClickListener() {
+        imgSchNavigationItemsSwitcherSecond.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lastSelectedIndex = newSelectedIndex;
-                newSelectedIndex = 1;
-                prepareDeSelectItemAnimation();
-                prepareSelectItemAnimation(view);
-                prepareCollapseItemAnimation();
-                setLastSelectedItemImage();
-                setNewSelectedItemImage();
-                runAnimationOnClickItem();
+                if (newSelectedIndex != 1) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 1;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation(view);
+                    runAnimationOnClickItem();
+                }
             }
         });
 
-        thirdCustomItemView.setOnClickListener(new View.OnClickListener() {
+        imgSchNavigationItemsSwitcherThird.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lastSelectedIndex = newSelectedIndex;
-                newSelectedIndex = 2;
-                prepareDeSelectItemAnimation();
-                prepareSelectItemAnimation(view);
-                prepareCollapseItemAnimation();
-                setLastSelectedItemImage();
-                setNewSelectedItemImage();
-                runAnimationOnClickItem();
+                if (newSelectedIndex != 2) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 2;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation(view);
+                    runAnimationOnClickItem();
+                }
             }
         });
 
-        fourthCustomItemView.setOnClickListener(new View.OnClickListener() {
+        imgSchNavigationItemsSwitcherFourth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lastSelectedIndex = newSelectedIndex;
-                newSelectedIndex = 3;
-                prepareDeSelectItemAnimation();
-                prepareSelectItemAnimation(view);
-                prepareExpandItemAnimation();
-                setLastSelectedItemImage();
-                setNewSelectedItemImage();
-                runAnimationOnClickItem();
+                if (newSelectedIndex != 3) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 3;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation(view);
+                    runAnimationOnClickItem();
+                }
             }
         });
 
         imgSchNavigationItemsSwitcherFifth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lastSelectedIndex = newSelectedIndex;
-                newSelectedIndex = 4;
-                prepareDeSelectItemAnimation();
-                prepareSelectItemAnimation(view);
-                prepareExpandItemAnimation();
-                setLastSelectedItemImage();
-                setNewSelectedItemImage();
-                runAnimationOnClickItem();
+                if (newSelectedIndex != 4) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 4;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation(view);
+                    runAnimationOnClickItem();
+                }
             }
         });
-
-//        fifthCustomItemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                lastSelectedIndex = newSelectedIndex;
-//                newSelectedIndex = 4;
-//                prepareDeSelectItemAnimation();
-//                prepareSelectItemAnimation(view);
-//                prepareCollapseItemAnimation();
-//                setLastSelectedItemImage();
-//                setNewSelectedItemImage();
-//                runAnimationOnClickItem();
-//            }
-//        });
     }
 
     private void prepareDeSelectItemAnimation() {
@@ -209,9 +217,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
         });
         moveDeSelectedItemAnimator.setDuration(500);
 
-        imgSchNavigationItemsSwitcherFifth.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pencil_selected_24));
-
-//        setImageSizeAnimation(deSelectedView, 1000, SET_SMALLER_SIZE);
+        ((ImageSwitcher) deSelectedView).setImageDrawable(ContextCompat.getDrawable(context, getImageDrawableIdBasedIndex(lastSelectedIndex, SET_SMALLER_SIZE)));
     }
 
     private void prepareSelectItemAnimation(final View view) {
@@ -224,9 +230,46 @@ public class FasationBottomNavigation extends ConstraintLayout {
         });
         moveSelectedItemAnimator.setDuration(500);
 
-        ((ImageSwitcher) view).setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pencil_selected_48));
+        ((ImageSwitcher) view).setImageDrawable(ContextCompat.getDrawable(context, getImageDrawableIdBasedIndex(newSelectedIndex, SET_BIGGER_SIZE)));
+    }
 
-//        setImageSizeAnimation(view, 1000, SET_BIGGER_SIZE);
+    private View getViewBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return imgSchNavigationItemsSwitcherFirst;
+            case 1:
+                return imgSchNavigationItemsSwitcherSecond;
+            case 2:
+                return imgSchNavigationItemsSwitcherThird;
+            case 3:
+                return imgSchNavigationItemsSwitcherFourth;
+            case 4:
+                return imgSchNavigationItemsSwitcherFifth;
+            default:
+                return null;
+        }
+    }
+
+    private int getImageDrawableIdBasedIndex(int index, boolean sizeStatus) {
+        switch (index) {
+            case 0:
+                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.home_selected_48 : R.drawable.home_selected_24;
+            case 1:
+                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.near_me_selected_48 : R.drawable.near_me_selected_24;
+            case 2:
+                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.magnify_selected_48 : R.drawable.magnify_selected_24;
+            case 3:
+                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.heart_selected_48 : R.drawable.heart_selected_24;
+            case 4:
+                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.pencil_selected_48 : R.drawable.pencil_selected_24;
+            default:
+                return -1;
+        }
+    }
+
+    private void runAnimationOnClickItem() {
+        moveDeSelectedItemAnimator.start();
+        moveSelectedItemAnimator.start();
     }
 
     private void prepareExpandItemAnimation() {
@@ -312,29 +355,6 @@ public class FasationBottomNavigation extends ConstraintLayout {
      */
     public int convertDpToPx(Context context, float dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
-    }
-
-    private View getViewBasedIndex(int index) {
-        switch (index) {
-            case 0:
-                return firstCustomItemView;
-            case 1:
-                return secondCustomItemView;
-            case 2:
-                return thirdCustomItemView;
-            case 3:
-                return fourthCustomItemView;
-            case 4:
-                return imgSchNavigationItemsSwitcherFifth;
-            default:
-                return null;
-        }
-    }
-
-    private void runAnimationOnClickItem() {
-        moveDeSelectedItemAnimator.start();
-        moveSelectedItemAnimator.start();
-//        expandSelectedItemAnimator.start();
     }
 
 //        if (attrs != null) {
