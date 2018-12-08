@@ -3,19 +3,30 @@ package com.example.fasationbottomnavigation;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageSwitcher;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ViewSwitcher;
 
 public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Constants
+    private static final int NOT_DEFINED = -777;
+    private static final boolean SET_BIGGER_SIZE = true;
+    private static final boolean SET_SMALLER_SIZE = false;
     //endregion Declare Constants
 
     //region Declare Variables
     private int lastSelectedIndex = 2;
     private int newSelectedIndex = 2;
+
+    private boolean fifthImageViewSetSource = true;
     //endregion Declare Variables
 
     //region Declarer Arrays & Lists
@@ -23,6 +34,9 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Objects
     private Context context;
+
+    Animation fadeInAnimation;
+    Animation fadeOutAnimation;
 
     private ValueAnimator moveSelectedItemAnimator;
     private ValueAnimator changeSizeSelectedItemAnimator;
@@ -33,6 +47,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Views
     View rootView;
+    ImageSwitcher imgSchNavigationItemsSwitcherFifth;
 
     ImageButton firstCustomItemView;
     ImageButton secondCustomItemView;
@@ -42,10 +57,6 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     RelativeLayout emptyRelativeLayout;
     //endregion Declare Views
-
-    private static final int NOT_DEFINED = -777;
-
-//    private final Context context;
 
     private int fasation_background_color = NOT_DEFINED;
     private int fasation_height = NOT_DEFINED;
@@ -77,13 +88,27 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     private void init(final Context context) {
 
+        fadeInAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+        fadeOutAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+
         rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
+
+        imgSchNavigationItemsSwitcherFifth = rootView.findViewById(R.id.img_sch_navigation_items_switcher_fifth);
+        imgSchNavigationItemsSwitcherFifth.setFactory(new ViewSwitcher.ViewFactory() {
+            @Override
+            public View makeView() {
+                return new ImageView(context);
+            }
+        });
+        imgSchNavigationItemsSwitcherFifth.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pencil_selected_24));
+        imgSchNavigationItemsSwitcherFifth.setInAnimation(fadeInAnimation);
+//        imgSchNavigationItemsSwitcherFifth.setOutAnimation(fadeOutAnimation);
 
         firstCustomItemView = rootView.findViewById(R.id.img_first);
         secondCustomItemView = rootView.findViewById(R.id.img_second);
         thirdCustomItemView = rootView.findViewById(R.id.img_third);
         fourthCustomItemView = rootView.findViewById(R.id.img_fourth);
-        fifthCustomItemView = rootView.findViewById(R.id.img_fifth);
+//        fifthCustomItemView = rootView.findViewById(R.id.img_fifth);
 
         emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
 
@@ -96,7 +121,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                 prepareSelectItemAnimation(view);
                 prepareCollapseItemAnimation();
                 setLastSelectedItemImage();
-                setNewtSelectedItemImage();
+                setNewSelectedItemImage();
                 runAnimationOnClickItem();
             }
         });
@@ -110,7 +135,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                 prepareSelectItemAnimation(view);
                 prepareCollapseItemAnimation();
                 setLastSelectedItemImage();
-                setNewtSelectedItemImage();
+                setNewSelectedItemImage();
                 runAnimationOnClickItem();
             }
         });
@@ -124,7 +149,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                 prepareSelectItemAnimation(view);
                 prepareCollapseItemAnimation();
                 setLastSelectedItemImage();
-                setNewtSelectedItemImage();
+                setNewSelectedItemImage();
                 runAnimationOnClickItem();
             }
         });
@@ -138,24 +163,38 @@ public class FasationBottomNavigation extends ConstraintLayout {
                 prepareSelectItemAnimation(view);
                 prepareExpandItemAnimation();
                 setLastSelectedItemImage();
-                setNewtSelectedItemImage();
+                setNewSelectedItemImage();
                 runAnimationOnClickItem();
             }
         });
 
-        fifthCustomItemView.setOnClickListener(new View.OnClickListener() {
+        imgSchNavigationItemsSwitcherFifth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 lastSelectedIndex = newSelectedIndex;
                 newSelectedIndex = 4;
                 prepareDeSelectItemAnimation();
                 prepareSelectItemAnimation(view);
-                prepareCollapseItemAnimation();
+                prepareExpandItemAnimation();
                 setLastSelectedItemImage();
-                setNewtSelectedItemImage();
+                setNewSelectedItemImage();
                 runAnimationOnClickItem();
             }
         });
+
+//        fifthCustomItemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                lastSelectedIndex = newSelectedIndex;
+//                newSelectedIndex = 4;
+//                prepareDeSelectItemAnimation();
+//                prepareSelectItemAnimation(view);
+//                prepareCollapseItemAnimation();
+//                setLastSelectedItemImage();
+//                setNewSelectedItemImage();
+//                runAnimationOnClickItem();
+//            }
+//        });
     }
 
     private void prepareDeSelectItemAnimation() {
@@ -169,6 +208,10 @@ public class FasationBottomNavigation extends ConstraintLayout {
             }
         });
         moveDeSelectedItemAnimator.setDuration(500);
+
+        imgSchNavigationItemsSwitcherFifth.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pencil_selected_24));
+
+//        setImageSizeAnimation(deSelectedView, 1000, SET_SMALLER_SIZE);
     }
 
     private void prepareSelectItemAnimation(final View view) {
@@ -180,6 +223,10 @@ public class FasationBottomNavigation extends ConstraintLayout {
             }
         });
         moveSelectedItemAnimator.setDuration(500);
+
+        ((ImageSwitcher) view).setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pencil_selected_48));
+
+//        setImageSizeAnimation(view, 1000, SET_BIGGER_SIZE);
     }
 
     private void prepareExpandItemAnimation() {
@@ -228,7 +275,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
 //        }
     }
 
-    private void setNewtSelectedItemImage() {
+    private void setNewSelectedItemImage() {
 //        switch (newSelectedIndex) {
 //            case 0:
 //                firstCustomItemView.setImageResource(R.drawable.home_selected_48);
@@ -250,6 +297,23 @@ public class FasationBottomNavigation extends ConstraintLayout {
 //        }
     }
 
+    private void setImageSizeAnimation(View view, int duration, boolean finalSizeStatus) {
+        ResizeAnimation resizeAnimation = new ResizeAnimation(view, convertDpToPx(context, finalSizeStatus == SET_BIGGER_SIZE ? 48 : 24), convertDpToPx(context, finalSizeStatus == SET_BIGGER_SIZE ? 48 : 24));
+        resizeAnimation.setDuration(duration);
+        view.startAnimation(resizeAnimation);
+    }
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp      A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public int convertDpToPx(Context context, float dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
+    }
+
     private View getViewBasedIndex(int index) {
         switch (index) {
             case 0:
@@ -261,7 +325,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
             case 3:
                 return fourthCustomItemView;
             case 4:
-                return fifthCustomItemView;
+                return imgSchNavigationItemsSwitcherFifth;
             default:
                 return null;
         }

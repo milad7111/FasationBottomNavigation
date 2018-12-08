@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/transparent">
@@ -72,22 +71,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/img_third" />
 
-    <ImageButton
-        android:id="@+id/img_fifth"
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/transparent"
-        android:clickable="true"
-        android:contentDescription="@string/image_view_content_description_fifth_image_view"
-        android:focusable="true"
-        android:paddingBottom="8dp"
-        android:src="@drawable/pencil_selected_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toEndOf="@+id/img_fourth" />
+    <!--<ImageButton-->
+    <!--android:id="@+id/img_fifth"-->
+    <!--android:layout_width="70dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:background="@color/transparent"-->
+    <!--android:clickable="true"-->
+    <!--android:contentDescription="@string/image_view_content_description_fifth_image_view"-->
+    <!--android:focusable="true"-->
+    <!--android:paddingBottom="8dp"-->
+    <!--android:src="@drawable/pencil_selected_24"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toStartOf="@+id/guideline2"-->
+    <!--app:layout_constraintStart_toEndOf="@+id/img_fourth" />-->
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline1"
@@ -102,5 +101,22 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="8dp" />
+
+    <ImageSwitcher
+        android:id="@+id/img_sch_navigation_items_switcher_fifth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/transparent"
+        android:clickable="true"
+        android:contentDescription="@string/image_view_content_description_fifth_image_view"
+        android:focusable="true"
+        android:paddingBottom="8dp"
+        android:src="@drawable/pencil_selected_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toEndOf="@+id/img_fourth" />
 
 </android.support.constraint.ConstraintLayout>
