@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
+
+    <RelativeLayout
+        android:id="@+id/empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bottom_sheet_background"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageButton
+        android:id="@+id/img_first"
+        android:layout_width="69dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/transparent"
+        android:clickable="true"
+        android:contentDescription="@string/image_view_content_description_first_image_view"
+        android:focusable="true"
+        android:paddingBottom="8dp"
+        android:src="@drawable/home_selected_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline1" />
+
+    <ImageButton
+        android:id="@+id/img_second"
+        android:layout_width="69dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:background="@color/transparent"
+        android:clickable="true"
+        android:contentDescription="@string/image_view_content_description_second_image_view"
+        android:focusable="true"
+        android:paddingBottom="8dp"
+        android:src="@drawable/near_me_selected_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/img_first" />
+
+    <ImageButton
+        android:id="@+id/img_third"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:background="@color/transparent"
+        android:clickable="true"
+        android:contentDescription="@string/image_view_content_description_third_image_view"
+        android:focusable="true"
+        android:paddingBottom="25dp"
+        android:src="@drawable/magnify_selected_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/img_second" />
+
+    <ImageButton
+        android:id="@+id/img_fourth"
+        android:layout_width="69dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:background="@color/transparent"
+        android:clickable="true"
+        android:contentDescription="@string/image_view_content_description_fourth_image_view"
+        android:focusable="true"
+        android:paddingBottom="8dp"
+        android:src="@drawable/heart_selected_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/img_third" />
+
+    <ImageButton
+        android:id="@+id/img_fifth"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/transparent"
+        android:clickable="true"
+        android:contentDescription="@string/image_view_content_description_fifth_image_view"
+        android:focusable="true"
+        android:paddingBottom="8dp"
+        android:src="@drawable/pencil_selected_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toEndOf="@+id/img_fourth" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="8dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="8dp" />
+
+</android.support.constraint.ConstraintLayout>

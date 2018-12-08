@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="fasation_normal_active_item_icon_mix_size">25dp</dimen>
+    <dimen name="fasation_normal_inactive_item_icon_mix_size">20dp</dimen>
+    <dimen name="fasation_height">56dp</dimen>
+
+    <dimen name="fasation_normal_active_item_icon_only_size">25dp</dimen>
+    <dimen name="fasation_normal_inactive_item_icon_only_size">30dp</dimen>
+
+    <dimen name="fasation_item_text_size">10sp</dimen>
+
+    <dimen name="fasation_relative_bottom_navigation_height">56dp</dimen>
+
+</resources>

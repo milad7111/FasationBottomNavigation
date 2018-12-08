@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RelativeBottomNavigation</string>
+    <string name="image_view_content_description_first_image_view">firstImageView</string>
+    <string name="image_view_content_description_second_image_view">secondImageView</string>
+    <string name="image_view_content_description_third_image_view">thirdImageView</string>
+    <string name="image_view_content_description_fourth_image_view">fourthImageView</string>
+    <string name="image_view_content_description_fifth_image_view">fifthImageView</string>
+</resources>
