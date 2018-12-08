@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
-public class FasationRelativeBottomNavigation extends ConstraintLayout {
+public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Constants
     //endregion Declare Constants
@@ -63,13 +63,13 @@ public class FasationRelativeBottomNavigation extends ConstraintLayout {
 
     private int fasation_item_text_size = NOT_DEFINED;
 
-    public FasationRelativeBottomNavigation(Context context) {
+    public FasationBottomNavigation(Context context) {
         super(context);
         this.context = context;
         init(context);
     }
 
-    public FasationRelativeBottomNavigation(Context context, AttributeSet attrs) {
+    public FasationBottomNavigation(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         init(context);
@@ -77,7 +77,7 @@ public class FasationRelativeBottomNavigation extends ConstraintLayout {
 
     private void init(final Context context) {
 
-        rootView = inflate(context, R.layout.fasation_relative_bottom_navigation, this);
+        rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
 
         firstCustomItemView = rootView.findViewById(R.id.img_first);
         secondCustomItemView = rootView.findViewById(R.id.img_second);

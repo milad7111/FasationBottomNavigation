@@ -1,6 +1,6 @@
 <resources>
 
-    <declare-styleable name="FasationRelativeBottomNavigation">
+    <declare-styleable name="FasationBottomNavigation">
 
         <attr name="fasation_background_color" format="color" />
         <attr name="fasation_height" format="dimension" />
