@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/empty_layout"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="60dp"
         android:background="@drawable/bottom_sheet_background"
         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -51,7 +51,7 @@
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_third_image_view"
         android:focusable="true"
-        android:paddingBottom="25dp"
+        android:paddingBottom="8dp"
         android:src="@drawable/magnify_selected_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/img_sch_navigation_items_switcher_fourth"

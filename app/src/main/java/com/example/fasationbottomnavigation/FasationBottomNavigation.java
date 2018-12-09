@@ -133,11 +133,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
         imgSchNavigationItemsSwitcherFourth.setInAnimation(fadeInAnimation);
         imgSchNavigationItemsSwitcherFifth.setInAnimation(fadeInAnimation);
 
-//        imgSchNavigationItemsSwitcherFirst.setOutAnimation(fadeOutAnimation);
-//        imgSchNavigationItemsSwitcherSecond.setOutAnimation(fadeOutAnimation);
-//        imgSchNavigationItemsSwitcherThird.setOutAnimation(fadeOutAnimation);
-//        imgSchNavigationItemsSwitcherFourth.setOutAnimation(fadeOutAnimation);
-//        imgSchNavigationItemsSwitcherFifth.setOutAnimation(fadeOutAnimation);
+        initItemsPosition(2);
 
         imgSchNavigationItemsSwitcherFirst.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,10 +201,17 @@ public class FasationBottomNavigation extends ConstraintLayout {
         });
     }
 
+    private void initItemsPosition(int defaultSelectedItemPosition) {
+        lastSelectedIndex = defaultSelectedItemPosition;
+        newSelectedIndex = defaultSelectedItemPosition;
+        prepareSelectItemAnimation(getViewBasedIndex(defaultSelectedItemPosition));
+        runAnimationOnClickItem();
+    }
+
     private void prepareDeSelectItemAnimation() {
         final View deSelectedView = getViewBasedIndex(lastSelectedIndex);
 
-        moveDeSelectedItemAnimator = ValueAnimator.ofInt(deSelectedView.getPaddingBottom(), 24);
+        moveDeSelectedItemAnimator = ValueAnimator.ofInt(deSelectedView.getPaddingBottom(), convertDpToPx(context, 0));
         moveDeSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -221,7 +224,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
     }
 
     private void prepareSelectItemAnimation(final View view) {
-        moveSelectedItemAnimator = ValueAnimator.ofInt(view.getPaddingBottom(), 76);
+        moveSelectedItemAnimator = ValueAnimator.ofInt(view.getPaddingBottom(), convertDpToPx(context, 24));
         moveSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -268,8 +271,11 @@ public class FasationBottomNavigation extends ConstraintLayout {
     }
 
     private void runAnimationOnClickItem() {
-        moveDeSelectedItemAnimator.start();
-        moveSelectedItemAnimator.start();
+        if (moveDeSelectedItemAnimator != null)
+            moveDeSelectedItemAnimator.start();
+
+        if (moveSelectedItemAnimator != null)
+            moveSelectedItemAnimator.start();
     }
 
     private void prepareExpandItemAnimation() {
