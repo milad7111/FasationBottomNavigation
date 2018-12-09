@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RelativeBottomNavigation</string>
+    <string name="app_name">FasationBottomNavigation</string>
     <string name="image_view_content_description_first_image_view">firstImageView</string>
     <string name="image_view_content_description_second_image_view">secondImageView</string>
     <string name="image_view_content_description_third_image_view">thirdImageView</string>
