@@ -2,6 +2,9 @@ package com.example.fasationbottomnavigation;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.View;
@@ -30,6 +33,9 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Objects
     private Context context;
+    private Paint mPaint = new Paint();
+    private Canvas mCanvas;
+    RectF mRectF;
 
     private ValueAnimator moveSelectedItemAnimator;
     private ValueAnimator moveDeSelectedItemAnimator;
@@ -74,18 +80,34 @@ public class FasationBottomNavigation extends ConstraintLayout {
     public FasationBottomNavigation(Context context) {
         super(context);
         this.context = context;
+        this.setWillNotDraw(false);
         init(context);
     }
 
     public FasationBottomNavigation(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        this.setWillNotDraw(false);
         init(context);
     }
     //endregion Constructor
 
+    //region Overrides
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        int height = canvas.getHeight() / 2;
+        int width = canvas.getWidth() / 2;
+        mRectF.set(width - 100, height - 200, width + 100, height + 500);
+        canvas.drawArc(mRectF, 0, -180, true, mPaint);
+    }
+    //endregion Overrides
+
     //region Declare Methods
     private void init(final Context context) {
+
+        mRectF = new RectF(10, 100, 700, 800);
 
         rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
         emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
