@@ -3,16 +3,11 @@ package com.example.fasationbottomnavigation;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
-import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ViewSwitcher;
 
 public class FasationBottomNavigation extends ConstraintLayout {
 
@@ -23,10 +18,11 @@ public class FasationBottomNavigation extends ConstraintLayout {
     //endregion Declare Constants
 
     //region Declare Variables
-    private int lastSelectedIndex = 2;
-    private int newSelectedIndex = 2;
+    private int lastSelectedIndex = -1;
+    private int newSelectedIndex = -1;
+    private int selectedItemOffset = 70;
 
-    private boolean fifthImageViewSetSource = true;
+    private boolean runDefault = false;
     //endregion Declare Variables
 
     //region Declarer Arrays & Lists
@@ -35,36 +31,28 @@ public class FasationBottomNavigation extends ConstraintLayout {
     //region Declare Objects
     private Context context;
 
-    private ViewSwitcher.ViewFactory imageSwitcherFactory;
-
-    Animation fadeInAnimation;
-    Animation fadeOutAnimation;
-
     private ValueAnimator moveSelectedItemAnimator;
-    private ValueAnimator changeSizeSelectedItemAnimator;
     private ValueAnimator moveDeSelectedItemAnimator;
-    private ValueAnimator changeSizeDeSelectedItemAnimator;
-    private ValueAnimator expandSelectedItemAnimator;
+
+    private Animation lastSelectedViewReSizeAnimation;
+    private Animation newSelectedViewReSizeAnimation;
     //endregion Declare Objects
 
     //region Declare Views
     View rootView;
+    View lastSelectedView;
+    View newSelectedView;
 
-    ImageSwitcher imgSchNavigationItemsSwitcherFirst;
-    ImageSwitcher imgSchNavigationItemsSwitcherSecond;
-    ImageSwitcher imgSchNavigationItemsSwitcherThird;
-    ImageSwitcher imgSchNavigationItemsSwitcherFourth;
-    ImageSwitcher imgSchNavigationItemsSwitcherFifth;
-
-    ImageButton firstCustomItemView;
-    ImageButton secondCustomItemView;
-    ImageButton thirdCustomItemView;
-    ImageButton fourthCustomItemView;
-    ImageButton fifthCustomItemView;
+    ImageView firstCustomItemView;
+    ImageView secondCustomItemView;
+    ImageView thirdCustomItemView;
+    ImageView fourthCustomItemView;
+    ImageView fifthCustomItemView;
 
     RelativeLayout emptyRelativeLayout;
     //endregion Declare Views
 
+    //region Custom Attributes
     private int fasation_background_color = NOT_DEFINED;
     private int fasation_height = NOT_DEFINED;
 
@@ -80,7 +68,9 @@ public class FasationBottomNavigation extends ConstraintLayout {
     private int fasation_inactive_item_icon_color = NOT_DEFINED;
 
     private int fasation_item_text_size = NOT_DEFINED;
+    //endregion Custom Attributes
 
+    //region Constructor
     public FasationBottomNavigation(Context context) {
         super(context);
         this.context = context;
@@ -92,50 +82,21 @@ public class FasationBottomNavigation extends ConstraintLayout {
         this.context = context;
         init(context);
     }
+    //endregion Constructor
 
+    //region Declare Methods
     private void init(final Context context) {
 
-        imageSwitcherFactory = new ViewSwitcher.ViewFactory() {
-            @Override
-            public View makeView() {
-                return new ImageView(context);
-            }
-        };
-
-        fadeInAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
-        fadeOutAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
-
         rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
-
         emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
 
-        imgSchNavigationItemsSwitcherFirst = rootView.findViewById(R.id.img_sch_navigation_items_switcher_first);
-        imgSchNavigationItemsSwitcherSecond = rootView.findViewById(R.id.img_sch_navigation_items_switcher_second);
-        imgSchNavigationItemsSwitcherThird = rootView.findViewById(R.id.img_sch_navigation_items_switcher_third);
-        imgSchNavigationItemsSwitcherFourth = rootView.findViewById(R.id.img_sch_navigation_items_switcher_fourth);
-        imgSchNavigationItemsSwitcherFifth = rootView.findViewById(R.id.img_sch_navigation_items_switcher_fifth);
+        firstCustomItemView = rootView.findViewById(R.id.img_navigation_items_first);
+        secondCustomItemView = rootView.findViewById(R.id.img_navigation_items_second);
+        thirdCustomItemView = rootView.findViewById(R.id.img_navigation_items_third);
+        fourthCustomItemView = rootView.findViewById(R.id.img_navigation_items_fourth);
+        fifthCustomItemView = rootView.findViewById(R.id.img_navigation_items_fifth);
 
-        imgSchNavigationItemsSwitcherFirst.setFactory(imageSwitcherFactory);
-        imgSchNavigationItemsSwitcherSecond.setFactory(imageSwitcherFactory);
-        imgSchNavigationItemsSwitcherThird.setFactory(imageSwitcherFactory);
-        imgSchNavigationItemsSwitcherFourth.setFactory(imageSwitcherFactory);
-        imgSchNavigationItemsSwitcherFifth.setFactory(imageSwitcherFactory);
-
-        imgSchNavigationItemsSwitcherFirst.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.home_selected_24));
-        imgSchNavigationItemsSwitcherSecond.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.near_me_selected_24));
-        imgSchNavigationItemsSwitcherThird.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.magnify_selected_24));
-        imgSchNavigationItemsSwitcherFourth.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.heart_selected_24));
-        imgSchNavigationItemsSwitcherFifth.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pencil_selected_24));
-
-        imgSchNavigationItemsSwitcherFirst.setInAnimation(fadeInAnimation);
-        imgSchNavigationItemsSwitcherSecond.setInAnimation(fadeInAnimation);
-        imgSchNavigationItemsSwitcherThird.setInAnimation(fadeInAnimation);
-        imgSchNavigationItemsSwitcherFourth.setInAnimation(fadeInAnimation);
-        imgSchNavigationItemsSwitcherFifth.setInAnimation(fadeInAnimation);
-
-        initItemsPosition(2);
-
-        imgSchNavigationItemsSwitcherFirst.setOnClickListener(new View.OnClickListener() {
+        firstCustomItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (newSelectedIndex != 0) {
@@ -148,7 +109,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
             }
         });
 
-        imgSchNavigationItemsSwitcherSecond.setOnClickListener(new View.OnClickListener() {
+        secondCustomItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (newSelectedIndex != 1) {
@@ -161,7 +122,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
             }
         });
 
-        imgSchNavigationItemsSwitcherThird.setOnClickListener(new View.OnClickListener() {
+        thirdCustomItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (newSelectedIndex != 2) {
@@ -174,7 +135,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
             }
         });
 
-        imgSchNavigationItemsSwitcherFourth.setOnClickListener(new View.OnClickListener() {
+        fourthCustomItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (newSelectedIndex != 3) {
@@ -187,7 +148,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
             }
         });
 
-        imgSchNavigationItemsSwitcherFifth.setOnClickListener(new View.OnClickListener() {
+        fifthCustomItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (newSelectedIndex != 4) {
@@ -201,72 +162,56 @@ public class FasationBottomNavigation extends ConstraintLayout {
         });
     }
 
-    private void initItemsPosition(int defaultSelectedItemPosition) {
-        lastSelectedIndex = defaultSelectedItemPosition;
-        newSelectedIndex = defaultSelectedItemPosition;
-        prepareSelectItemAnimation(getViewBasedIndex(defaultSelectedItemPosition));
-        runAnimationOnClickItem();
-    }
-
     private void prepareDeSelectItemAnimation() {
-        final View deSelectedView = getViewBasedIndex(lastSelectedIndex);
+        lastSelectedView = getViewBasedIndex(lastSelectedIndex);
 
-        moveDeSelectedItemAnimator = ValueAnimator.ofInt(deSelectedView.getPaddingBottom(), convertDpToPx(context, 0));
-        moveDeSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                deSelectedView.setPadding(deSelectedView.getPaddingLeft(), deSelectedView.getPaddingTop(), deSelectedView.getPaddingRight(), (Integer) valueAnimator.getAnimatedValue());
-            }
-        });
-        moveDeSelectedItemAnimator.setDuration(500);
+        if (lastSelectedView != null) {
+            final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) lastSelectedView.getLayoutParams();
+            moveDeSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, mLayoutParams.bottomMargin - selectedItemOffset);
+            moveDeSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    mLayoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
+                    lastSelectedView.requestLayout();
+                }
+            });
+            moveDeSelectedItemAnimator.setDuration(500);
 
-        ((ImageSwitcher) deSelectedView).setImageDrawable(ContextCompat.getDrawable(context, getImageDrawableIdBasedIndex(lastSelectedIndex, SET_SMALLER_SIZE)));
+            setImageSizeAnimation(lastSelectedView, 200, SET_SMALLER_SIZE);
+        }
     }
 
     private void prepareSelectItemAnimation(final View view) {
-        moveSelectedItemAnimator = ValueAnimator.ofInt(view.getPaddingBottom(), convertDpToPx(context, 24));
+        newSelectedView = view;
+
+        final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) newSelectedView.getLayoutParams();
+        moveSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, mLayoutParams.bottomMargin + selectedItemOffset);
         moveSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), (Integer) valueAnimator.getAnimatedValue());
+                mLayoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
+                newSelectedView.requestLayout();
             }
         });
         moveSelectedItemAnimator.setDuration(500);
 
-        ((ImageSwitcher) view).setImageDrawable(ContextCompat.getDrawable(context, getImageDrawableIdBasedIndex(newSelectedIndex, SET_BIGGER_SIZE)));
+        setImageSizeAnimation(newSelectedView, 200, SET_BIGGER_SIZE);
     }
 
     private View getViewBasedIndex(int index) {
         switch (index) {
             case 0:
-                return imgSchNavigationItemsSwitcherFirst;
+                return firstCustomItemView;
             case 1:
-                return imgSchNavigationItemsSwitcherSecond;
+                return secondCustomItemView;
             case 2:
-                return imgSchNavigationItemsSwitcherThird;
+                return thirdCustomItemView;
             case 3:
-                return imgSchNavigationItemsSwitcherFourth;
+                return fourthCustomItemView;
             case 4:
-                return imgSchNavigationItemsSwitcherFifth;
+                return fifthCustomItemView;
             default:
                 return null;
-        }
-    }
-
-    private int getImageDrawableIdBasedIndex(int index, boolean sizeStatus) {
-        switch (index) {
-            case 0:
-                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.home_selected_48 : R.drawable.home_selected_24;
-            case 1:
-                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.near_me_selected_48 : R.drawable.near_me_selected_24;
-            case 2:
-                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.magnify_selected_48 : R.drawable.magnify_selected_24;
-            case 3:
-                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.heart_selected_48 : R.drawable.heart_selected_24;
-            case 4:
-                return sizeStatus == SET_BIGGER_SIZE ? R.drawable.pencil_selected_48 : R.drawable.pencil_selected_24;
-            default:
-                return -1;
         }
     }
 
@@ -276,80 +221,32 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
         if (moveSelectedItemAnimator != null)
             moveSelectedItemAnimator.start();
-    }
 
-    private void prepareExpandItemAnimation() {
-//        final LayoutParams mLayoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200);
-//        expandSelectedItemAnimator = ValueAnimator.ofInt(emptyRelativeLayout.getHeight(), 1000);
-//        expandSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                emptyRelativeLayout.setLayoutParams(mLayoutParams);
-//            }
-//        });
-//        expandSelectedItemAnimator.setDuration(1000);
-    }
+        if (runDefault) {
+            if (lastSelectedView != null)
+                lastSelectedView.startAnimation(lastSelectedViewReSizeAnimation);
 
-    private void prepareCollapseItemAnimation() {
-//        final LayoutParams mLayoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        expandSelectedItemAnimator = ValueAnimator.ofInt(emptyRelativeLayout.getHeight(), 168);
-//        expandSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                emptyRelativeLayout.setLayoutParams(mLayoutParams);
-//            }
-//        });
-//        expandSelectedItemAnimator.setDuration(1000);
-    }
+            if (newSelectedView != null)
+                newSelectedView.startAnimation(newSelectedViewReSizeAnimation);
+        }
 
-    private void setLastSelectedItemImage() {
-//        switch (lastSelectedIndex) {
-//            case 0:
-//                firstCustomItemView.setImageResource(R.drawable.home_selected_24);
-//                break;
-//            case 1:
-//                secondCustomItemView.setImageResource(R.drawable.near_me_selected_24);
-//                break;
-//            case 2:
-//                thirdCustomItemView.setImageResource(R.drawable.magnify_selected_24);
-//                break;
-//            case 3:
-//                fourthCustomItemView.setImageResource(R.drawable.heart_selected_24);
-//                break;
-//            case 4:
-//                fifthCustomItemView.setImageResource(R.drawable.pencil_selected_24);
-//                break;
-//            default:
-//                break;
-//        }
-    }
-
-    private void setNewSelectedItemImage() {
-//        switch (newSelectedIndex) {
-//            case 0:
-//                firstCustomItemView.setImageResource(R.drawable.home_selected_48);
-//                break;
-//            case 1:
-//                secondCustomItemView.setImageResource(R.drawable.near_me_selected_48);
-//                break;
-//            case 2:
-//                thirdCustomItemView.setImageResource(R.drawable.magnify_selected_48);
-//                break;
-//            case 3:
-//                fourthCustomItemView.setImageResource(R.drawable.heart_selected_48);
-//                break;
-//            case 4:
-//                fifthCustomItemView.setImageResource(R.drawable.pencil_selected_48);
-//                break;
-//            default:
-//                break;
-//        }
+        runDefault = true;
     }
 
     private void setImageSizeAnimation(View view, int duration, boolean finalSizeStatus) {
-        ResizeAnimation resizeAnimation = new ResizeAnimation(view, convertDpToPx(context, finalSizeStatus == SET_BIGGER_SIZE ? 48 : 24), convertDpToPx(context, finalSizeStatus == SET_BIGGER_SIZE ? 48 : 24));
-        resizeAnimation.setDuration(duration);
-        view.startAnimation(resizeAnimation);
+        if (finalSizeStatus == SET_SMALLER_SIZE) {
+            lastSelectedViewReSizeAnimation = new ResizeAnimation(view, (int) (view.getWidth() * 0.75), (int) (view.getHeight() * 0.75));
+            lastSelectedViewReSizeAnimation.setDuration(duration);
+        } else if (finalSizeStatus == SET_BIGGER_SIZE) {
+            newSelectedViewReSizeAnimation = new ResizeAnimation(view, (int) (view.getWidth() * 100 / 75), (int) (view.getHeight() * 100 / 75));
+            newSelectedViewReSizeAnimation.setDuration(duration);
+        }
+    }
+
+    public void initDefaultItem(int defaultSelectedItemPosition) {
+        newSelectedIndex = defaultSelectedItemPosition;
+        prepareSelectItemAnimation(getViewBasedIndex(defaultSelectedItemPosition));
+        runAnimationOnClickItem();
     }
 
     /**
@@ -362,6 +259,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
     public int convertDpToPx(Context context, float dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
+    //endregion Declare Methods
 
 //        if (attrs != null) {
 //            Resources resources = getResources();
