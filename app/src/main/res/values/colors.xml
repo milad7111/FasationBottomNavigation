@@ -11,5 +11,6 @@
     <color name="fasation_inactive_item_icon_color">#7E8080</color>
 
     <color name="transparent">#00FFFFFF</color>
+    <color name="fasation_bottom_navigation_background_color">#D9FFFFFF</color>
 
 </resources>

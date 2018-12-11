@@ -3,9 +3,12 @@ package com.example.fasationbottomnavigation;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
@@ -24,6 +27,10 @@ public class FasationBottomNavigation extends ConstraintLayout {
     private int lastSelectedIndex = -1;
     private int newSelectedIndex = -1;
     private int selectedItemOffset = 70;
+    private int bezierWidth = 0;
+    private int bezierHeight = 0;
+    private int bottomSheetItemsCount = 5;
+    private int horizontallyOffset = 0;
 
     private boolean runDefault = false;
     //endregion Declare Variables
@@ -56,6 +63,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
     ImageView fifthCustomItemView;
 
     RelativeLayout emptyRelativeLayout;
+    private BezierView centerContent;
     //endregion Declare Views
 
     //region Custom Attributes
@@ -97,20 +105,54 @@ public class FasationBottomNavigation extends ConstraintLayout {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        int height = canvas.getHeight() / 2;
-        int width = canvas.getWidth() / 2;
-        mRectF.set(width - 100, height - 200, width + 100, height + 500);
-        canvas.drawArc(mRectF, 0, -180, true, mPaint);
+//        ValueAnimator anim = ObjectAnimator.ofInt(0, 100);
+//        anim.setDuration(5000);
+//        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                // calling invalidate(); will trigger onDraw() to execute
+//                invalidate();
+//            }
+//        });
+//        anim.start();
+
+        if (newSelectedIndex != -1) {
+            bezierWidth = (int) (0.95 * emptyRelativeLayout.getWidth() / 5);
+            bezierHeight = emptyRelativeLayout.getHeight();
+
+            horizontallyOffset = (int) (0.025 * emptyRelativeLayout.getWidth());
+
+            centerContent.setWidth(bezierWidth);
+            centerContent.setHeight(bezierHeight);
+            centerContent.setStartY(0);
+
+            for (int i = 0; i < bottomSheetItemsCount; i++) {
+                centerContent.setStartX(horizontallyOffset + newSelectedIndex * bezierWidth);
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                centerContent.draw(canvas);
+            }
+        }
+    }
+
+    /**
+     * Creating bezier view with params
+     *
+     * @return created bezier view
+     */
+    private BezierView buildBezierView() {
+        BezierView bezierView = new BezierView(context, ContextCompat.getColor(context, R.color.colorAccent));
+        bezierView.build(bezierWidth, bezierHeight, false);
+        return bezierView;
     }
     //endregion Overrides
 
     //region Declare Methods
     private void init(final Context context) {
 
-        mRectF = new RectF(10, 100, 700, 800);
-
         rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
         emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
+
+        centerContent = buildBezierView();
 
         firstCustomItemView = rootView.findViewById(R.id.img_navigation_items_first);
         secondCustomItemView = rootView.findViewById(R.id.img_navigation_items_second);
@@ -127,6 +169,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
                     runAnimationOnClickItem();
+                    invalidate();
                 }
             }
         });
@@ -140,6 +183,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
                     runAnimationOnClickItem();
+                    invalidate();
                 }
             }
         });
@@ -153,6 +197,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
                     runAnimationOnClickItem();
+                    invalidate();
                 }
             }
         });
@@ -166,6 +211,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
                     runAnimationOnClickItem();
+                    invalidate();
                 }
             }
         });
@@ -179,6 +225,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
                     runAnimationOnClickItem();
+                    invalidate();
                 }
             }
         });
