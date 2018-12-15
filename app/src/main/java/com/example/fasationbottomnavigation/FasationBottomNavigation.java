@@ -1,17 +1,14 @@
 package com.example.fasationbottomnavigation;
 
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.RectF;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -21,18 +18,25 @@ public class FasationBottomNavigation extends ConstraintLayout {
     private static final int NOT_DEFINED = -777;
     private static final boolean SET_BIGGER_SIZE = true;
     private static final boolean SET_SMALLER_SIZE = false;
+    private static final int ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY = 1000;
+    private static final int SELECTED_ITEM_EXPANDABLE_DISABLE = 2000;
+    private static final int SELECTED_ITEM_EXPANDABLE_FAILED = 3000;
     //endregion Declare Constants
 
     //region Declare Variables
     private int lastSelectedIndex = -1;
     private int newSelectedIndex = -1;
-    private int selectedItemOffset = 70;
-    private int bezierWidth = 0;
-    private int bezierHeight = 0;
-    private int bottomSheetItemsCount = 5;
-    private int horizontallyOffset = 0;
+    private int selectedItemOffset = 26; //dp
+    private int defaultItemOffset = 16; //dp
+    private int selectedItemHorizontallyOffset;
+    private int defaultSelectedItem = 2;
 
     private boolean runDefault = false;
+    private boolean firstItemExpandable = false;
+    private boolean secondItemExpandable = false;
+    private boolean thirdItemExpandable = false;
+    private boolean fourthItemExpandable = false;
+    private boolean fifthItemExpandable = false;
     //endregion Declare Variables
 
     //region Declarer Arrays & Lists
@@ -40,12 +44,11 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Objects
     private Context context;
-    private Paint mPaint = new Paint();
-    private Canvas mCanvas;
-    RectF mRectF;
+    private ObjectAnimator moveSelectedItemBackgroundAnimator;
 
-    private ValueAnimator moveSelectedItemAnimator;
+    private ValueAnimator expandSelectedItemFrameLayoutAnimator;
     private ValueAnimator moveDeSelectedItemAnimator;
+    private ValueAnimator moveSelectedItemAnimator;
 
     private Animation lastSelectedViewReSizeAnimation;
     private Animation newSelectedViewReSizeAnimation;
@@ -56,6 +59,8 @@ public class FasationBottomNavigation extends ConstraintLayout {
     View lastSelectedView;
     View newSelectedView;
 
+    ImageView imgNavigationBackgroundSelectedItem;
+
     ImageView firstCustomItemView;
     ImageView secondCustomItemView;
     ImageView thirdCustomItemView;
@@ -63,7 +68,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
     ImageView fifthCustomItemView;
 
     RelativeLayout emptyRelativeLayout;
-    private BezierView centerContent;
+    FrameLayout bottomFrameLayout;
     //endregion Declare Views
 
     //region Custom Attributes
@@ -100,59 +105,25 @@ public class FasationBottomNavigation extends ConstraintLayout {
     }
     //endregion Constructor
 
-    //region Overrides
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-//        ValueAnimator anim = ObjectAnimator.ofInt(0, 100);
-//        anim.setDuration(5000);
-//        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                // calling invalidate(); will trigger onDraw() to execute
-//                invalidate();
-//            }
-//        });
-//        anim.start();
+        if (!runDefault)
+            initDefaultItem(defaultSelectedItem);
 
-        if (newSelectedIndex != -1) {
-            bezierWidth = (int) (0.95 * emptyRelativeLayout.getWidth() / 5);
-            bezierHeight = emptyRelativeLayout.getHeight();
-
-            horizontallyOffset = (int) (0.025 * emptyRelativeLayout.getWidth());
-
-            centerContent.setWidth(bezierWidth);
-            centerContent.setHeight(bezierHeight);
-            centerContent.setStartY(0);
-
-            for (int i = 0; i < bottomSheetItemsCount; i++) {
-                centerContent.setStartX(horizontallyOffset + newSelectedIndex * bezierWidth);
-                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                centerContent.draw(canvas);
-            }
-        }
+        runDefault = true;
     }
-
-    /**
-     * Creating bezier view with params
-     *
-     * @return created bezier view
-     */
-    private BezierView buildBezierView() {
-        BezierView bezierView = new BezierView(context, ContextCompat.getColor(context, R.color.colorAccent));
-        bezierView.build(bezierWidth, bezierHeight, false);
-        return bezierView;
-    }
-    //endregion Overrides
 
     //region Declare Methods
     private void init(final Context context) {
 
         rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
         emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
+//        bottomFrameLayout = rootView.findViewById(R.id.bottom_frame_layout);
 
-        centerContent = buildBezierView();
+        imgNavigationBackgroundSelectedItem = rootView.findViewById(R.id.img_navigation_background_selected_item);
 
         firstCustomItemView = rootView.findViewById(R.id.img_navigation_items_first);
         secondCustomItemView = rootView.findViewById(R.id.img_navigation_items_second);
@@ -168,6 +139,8 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     newSelectedIndex = 0;
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
+                    handleExpandableItem();
+                    prepareSelectedItemBackgroundAnimation();
                     runAnimationOnClickItem();
                     invalidate();
                 }
@@ -182,6 +155,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     newSelectedIndex = 1;
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
+                    prepareSelectedItemBackgroundAnimation();
                     runAnimationOnClickItem();
                     invalidate();
                 }
@@ -196,6 +170,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     newSelectedIndex = 2;
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
+                    prepareSelectedItemBackgroundAnimation();
                     runAnimationOnClickItem();
                     invalidate();
                 }
@@ -210,6 +185,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     newSelectedIndex = 3;
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
+                    prepareSelectedItemBackgroundAnimation();
                     runAnimationOnClickItem();
                     invalidate();
                 }
@@ -224,6 +200,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
                     newSelectedIndex = 4;
                     prepareDeSelectItemAnimation();
                     prepareSelectItemAnimation(view);
+                    prepareSelectedItemBackgroundAnimation();
                     runAnimationOnClickItem();
                     invalidate();
                 }
@@ -231,12 +208,30 @@ public class FasationBottomNavigation extends ConstraintLayout {
         });
     }
 
+    private void handleExpandableItem() {
+//        final ConstraintLayout.LayoutParams mLayoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, convertDpToPx(context, 200));
+//        expandSelectedItemFrameLayoutAnimator = ValueAnimator.ofInt(0, convertDpToPx(context, 200));
+//        expandSelectedItemFrameLayoutAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                mLayoutParams.height = (Integer) valueAnimator.getAnimatedValue();
+//                bottomFrameLayout.setLayoutParams(mLayoutParams);
+//                bottomFrameLayout.requestLayout();
+//            }
+//        });
+//        expandSelectedItemFrameLayoutAnimator.setDuration(1000);
+    }
+
     private void prepareDeSelectItemAnimation() {
+
         lastSelectedView = getViewBasedIndex(lastSelectedIndex);
 
         if (lastSelectedView != null) {
+            if (moveDeSelectedItemAnimator != null && moveDeSelectedItemAnimator.isRunning())
+                moveDeSelectedItemAnimator.end();
+
             final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) lastSelectedView.getLayoutParams();
-            moveDeSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, mLayoutParams.bottomMargin - selectedItemOffset);
+            moveDeSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset));
             moveDeSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -253,8 +248,11 @@ public class FasationBottomNavigation extends ConstraintLayout {
     private void prepareSelectItemAnimation(final View view) {
         newSelectedView = view;
 
+        if (moveSelectedItemAnimator != null && moveSelectedItemAnimator.isRunning())
+            moveSelectedItemAnimator.end();
+
         final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) newSelectedView.getLayoutParams();
-        moveSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, mLayoutParams.bottomMargin + selectedItemOffset);
+        moveSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset) + convertDpToPx(context, selectedItemOffset));
         moveSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -265,6 +263,14 @@ public class FasationBottomNavigation extends ConstraintLayout {
         moveSelectedItemAnimator.setDuration(500);
 
         setImageSizeAnimation(newSelectedView, 200, SET_BIGGER_SIZE);
+    }
+
+    private void prepareSelectedItemBackgroundAnimation() {
+        int xCurrentPosition = imgNavigationBackgroundSelectedItem.getLeft();
+        int xNewPosition = (int) (selectedItemHorizontallyOffset + newSelectedIndex * emptyRelativeLayout.getWidth() * 0.95 / 5);
+
+        moveSelectedItemBackgroundAnimator = ObjectAnimator.ofFloat(imgNavigationBackgroundSelectedItem, "translationX", xNewPosition - xCurrentPosition);
+        moveSelectedItemBackgroundAnimator.setDuration(200);
     }
 
     private View getViewBasedIndex(int index) {
@@ -285,21 +291,23 @@ public class FasationBottomNavigation extends ConstraintLayout {
     }
 
     private void runAnimationOnClickItem() {
+        if (moveSelectedItemBackgroundAnimator != null)
+            moveSelectedItemBackgroundAnimator.start();
+
+//        if (expandSelectedItemFrameLayoutAnimator != null)
+//            expandSelectedItemFrameLayoutAnimator.start();
+
         if (moveDeSelectedItemAnimator != null)
             moveDeSelectedItemAnimator.start();
 
         if (moveSelectedItemAnimator != null)
             moveSelectedItemAnimator.start();
 
-        if (runDefault) {
-            if (lastSelectedView != null)
-                lastSelectedView.startAnimation(lastSelectedViewReSizeAnimation);
+        if (lastSelectedView != null)
+            lastSelectedView.startAnimation(lastSelectedViewReSizeAnimation);
 
-            if (newSelectedView != null)
-                newSelectedView.startAnimation(newSelectedViewReSizeAnimation);
-        }
-
-        runDefault = true;
+        if (newSelectedView != null)
+            newSelectedView.startAnimation(newSelectedViewReSizeAnimation);
     }
 
     private void setImageSizeAnimation(View view, int duration, boolean finalSizeStatus) {
@@ -312,10 +320,18 @@ public class FasationBottomNavigation extends ConstraintLayout {
         }
     }
 
+    /**
+     * This method select default item from bottom navigation and calculate offset from left of screen for future use
+     *
+     * @param defaultSelectedItemPosition An int value as index of default selected item start from zero to last index
+     * @return void
+     */
     public void initDefaultItem(int defaultSelectedItemPosition) {
         newSelectedIndex = defaultSelectedItemPosition;
         prepareSelectItemAnimation(getViewBasedIndex(defaultSelectedItemPosition));
         runAnimationOnClickItem();
+        selectedItemHorizontallyOffset = (int) (imgNavigationBackgroundSelectedItem.getLeft() - 2 * emptyRelativeLayout.getWidth() * 0.95 / 5);
+        prepareSelectedItemBackgroundAnimation();
     }
 
     /**
@@ -327,6 +343,69 @@ public class FasationBottomNavigation extends ConstraintLayout {
      */
     public int convertDpToPx(Context context, float dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
+    }
+
+    public void setItemExpandable(int index, boolean itemExpandable) {
+        switch (index) {
+            case 0:
+                this.firstItemExpandable = itemExpandable;
+                break;
+            case 1:
+                this.secondItemExpandable = itemExpandable;
+                break;
+            case 2:
+                this.thirdItemExpandable = itemExpandable;
+                break;
+            case 3:
+                this.fourthItemExpandable = itemExpandable;
+                break;
+            case 4:
+                this.fifthItemExpandable = itemExpandable;
+                break;
+        }
+    }
+
+    public int setItemExpandableLayout(int index, int layoutId) {
+
+        switch (index) {
+            case 0:
+                if (this.firstItemExpandable) {
+                    bottomFrameLayout.removeAllViews();
+                    bottomFrameLayout.addView(getViewById(layoutId));
+                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
+                } else
+                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
+            case 1:
+                if (this.secondItemExpandable) {
+                    bottomFrameLayout.removeAllViews();
+                    bottomFrameLayout.addView(getViewById(layoutId));
+                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
+                } else
+                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
+            case 2:
+                if (this.thirdItemExpandable) {
+                    bottomFrameLayout.removeAllViews();
+                    bottomFrameLayout.addView(getViewById(layoutId));
+                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
+                } else
+                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
+            case 3:
+                if (this.fourthItemExpandable) {
+                    bottomFrameLayout.removeAllViews();
+                    bottomFrameLayout.addView(getViewById(layoutId));
+                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
+                } else
+                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
+            case 4:
+                if (this.fifthItemExpandable) {
+                    bottomFrameLayout.removeAllViews();
+                    bottomFrameLayout.addView(getViewById(layoutId));
+                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
+                } else
+                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
+            default:
+                return SELECTED_ITEM_EXPANDABLE_FAILED;
+        }
     }
     //endregion Declare Methods
 

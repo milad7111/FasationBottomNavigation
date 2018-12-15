@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/transparent">
+    android:background="@color/transparent"
+    android:clickable="true"
+    android:focusable="true">
 
     <RelativeLayout
         android:id="@+id/empty_layout"
@@ -13,15 +16,29 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageView
+        android:id="@+id/img_navigation_background_selected_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/image_view_content_description_img_navigation_background_selected_item"
+        android:src="@drawable/background_selected_item"
+        app:layout_constraintBottom_toBottomOf="@id/guideline8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideline8" />
+
+    <ImageView
         android:id="@+id/img_navigation_items_first"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_first_image_view"
         android:focusable="true"
-        android:src="@drawable/home_selected_24"
+        android:src="@drawable/home_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1" />
@@ -30,12 +47,12 @@
         android:id="@+id/img_navigation_items_second"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_second_image_view"
         android:focusable="true"
-        android:src="@drawable/near_me_selected_24"
+        android:src="@drawable/near_me_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toEndOf="@+id/guideline2" />
@@ -44,12 +61,12 @@
         android:id="@+id/img_navigation_items_third"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_third_image_view"
         android:focusable="true"
-        android:src="@drawable/magnify_selected_48"
+        android:src="@drawable/magnify_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toEndOf="@+id/guideline3" />
@@ -58,12 +75,12 @@
         android:id="@+id/img_navigation_items_fourth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_fourth_image_view"
         android:focusable="true"
-        android:src="@drawable/heart_selected_24"
+        android:src="@drawable/heart_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintStart_toEndOf="@+id/guideline4" />
@@ -72,12 +89,12 @@
         android:id="@+id/img_navigation_items_fifth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_fifth_image_view"
         android:focusable="true"
-        android:src="@drawable/pencil_selected_24"
+        android:src="@drawable/pencil_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toEndOf="@+id/guideline6"
         app:layout_constraintStart_toEndOf="@+id/guideline5" />
@@ -130,5 +147,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="1" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="56dp" />
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/bottom_frame_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:background="@color/fasation_bottom_navigation_background_color"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent" />-->
 
 </android.support.constraint.ConstraintLayout>

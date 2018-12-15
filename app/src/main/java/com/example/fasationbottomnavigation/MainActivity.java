@@ -21,8 +21,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this::onMapReady);
-        FasationBottomNavigation mFasationBottomNavigation = findViewById(R.id.fasationBottomNavigation);
-        mFasationBottomNavigation.initDefaultItem(2);
     }
 
     @Override
