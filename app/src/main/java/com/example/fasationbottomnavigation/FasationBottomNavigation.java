@@ -4,7 +4,10 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
@@ -30,6 +33,8 @@ public class FasationBottomNavigation extends ConstraintLayout {
     private int defaultItemOffset = 16; //dp
     private int selectedItemHorizontallyOffset;
     private int defaultSelectedItem = 2;
+    private int bezierWidth = 0;
+    private int bezierHeight = 0;
 
     private boolean runDefault = false;
     private boolean firstItemExpandable = false;
@@ -44,6 +49,9 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Objects
     private Context context;
+    private Paint mPaint = new Paint();
+    private Canvas mCanvas;
+    RectF mRectF;
     private ObjectAnimator moveSelectedItemBackgroundAnimator;
 
     private ValueAnimator expandSelectedItemFrameLayoutAnimator;
@@ -68,6 +76,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
     ImageView fifthCustomItemView;
 
     RelativeLayout emptyRelativeLayout;
+    private BezierView centerContent;
     FrameLayout bottomFrameLayout;
     //endregion Declare Views
 
@@ -114,6 +123,31 @@ public class FasationBottomNavigation extends ConstraintLayout {
             initDefaultItem(defaultSelectedItem);
 
         runDefault = true;
+
+        if (newSelectedIndex != -1) {
+            bezierWidth = (int) (0.95 * emptyRelativeLayout.getWidth() / 5);
+            bezierHeight = getHeight() - emptyRelativeLayout.getHeight() - convertDpToPx(context, 8);
+
+            int horizontallyOffset = (int) (0.025 * emptyRelativeLayout.getWidth());
+
+            centerContent.setWidth(bezierWidth);
+            centerContent.setHeight(bezierHeight);
+            centerContent.setStartY(convertDpToPx(context, 8));
+
+            centerContent.setStartX(horizontallyOffset + 2 * bezierWidth);
+            centerContent.draw(canvas);
+        }
+    }
+
+    /**
+     * Creating bezier view with params
+     *
+     * @return created bezier view
+     */
+    private BezierView buildBezierView() {
+        BezierView bezierView = new BezierView(context, ContextCompat.getColor(context, R.color.fasation_bottom_navigation_background_color));
+        bezierView.build(bezierWidth, bezierHeight, false);
+        return bezierView;
     }
 
     //region Declare Methods
@@ -122,6 +156,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
         rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
         emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
 //        bottomFrameLayout = rootView.findViewById(R.id.bottom_frame_layout);
+        centerContent = buildBezierView();
 
         imgNavigationBackgroundSelectedItem = rootView.findViewById(R.id.img_navigation_background_selected_item);
 

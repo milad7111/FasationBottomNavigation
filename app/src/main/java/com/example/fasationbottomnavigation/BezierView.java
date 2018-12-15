@@ -60,24 +60,31 @@ class BezierView extends RelativeLayout {
     protected void onDraw(Canvas canvas) {
 
         int offsetX = (int) (bezierWidth * 0.05);
-        int offsetY = (int) (bezierHeight * 0.1);
+        int offsetY = 0;
 
         paint.setColor(backgroundColor);
         path.reset();
-        path.moveTo(startX - 4 * offsetX, startY + bezierHeight);
+
+        int startPointX = startX - 2 * offsetX;
+        int startPointY = startY + bezierHeight;
+
+        int endPointX = startX + bezierWidth + 2 * offsetX;
+        int endPointY = startY + bezierHeight;
+
+        path.moveTo(startPointX, startPointY);
 
         if (!isLinear) {
 
+            int x1 = startX + bezierWidth / 4 - 3 * offsetX, y1 = startY + bezierHeight;
+            int x2 = startX + bezierWidth / 4 - 4 * offsetX, y2 = startY + offsetY;
 
-            int x1 = startX + bezierWidth / 4 - 8 * offsetX, y1 = startY + bezierHeight;
-            int x2 = (int) (startX + bezierWidth / 4 - 0.5 * offsetX), y2 = startY + offsetY;
             int x3 = startX + bezierWidth / 2, y3 = startY + offsetY;
-            int x4 = (int) (startX + bezierWidth * 3 / 4 + 0.5 * offsetX), y4 = startY + offsetY;
-            int x5 = startX + bezierWidth * 3 / 4 + 8 * offsetX, y5 = startY + bezierHeight;
-            int x6 = startX + bezierWidth + 4 * offsetX, y6 = startY + bezierHeight;
+
+            int x4 = (int) (startX + bezierWidth * 3.0 / 4 + 4 * offsetX), y4 = startY + offsetY;
+            int x5 = startX + bezierWidth * 3 / 4 + 3 * offsetX, y5 = startY + bezierHeight;
 
             path.cubicTo(x1, y1, x2, y2, x3, y3);
-            path.cubicTo(x4, y4, x5, y5, x6, y6);
+            path.cubicTo(x4, y4, x5, y5, endPointX, endPointY);
         }
 
         canvas.drawPath(path, paint);
