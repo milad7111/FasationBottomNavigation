@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
     <color name="fasation_background_color">#fff</color>
-    <color name="fasation_active_item_background_color">#EE7373</color>
+    <color name="fasation_active_item_background_color_top">#F489A9</color>
+    <color name="fasation_active_item_background_color_bottom">#FD575B</color>
     <color name="fasation_inactive_item_background_color">#00FFFFFF</color>
     <color name="fasation_active_item_icon_color">#fff</color>
     <color name="fasation_inactive_item_icon_color">#9EA0A0</color>

@@ -4,8 +4,8 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -14,6 +14,8 @@ import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import com.devs.vectorchildfinder.VectorChildFinder;
 
 public class FasationBottomNavigation extends ConstraintLayout {
 
@@ -28,13 +30,17 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Variables
     private int lastSelectedIndex = -1;
-    private int newSelectedIndex = -1;
+    private int newSelectedIndex = 2;
     private int selectedItemOffset = 26; //dp
     private int defaultItemOffset = 16; //dp
     private int selectedItemHorizontallyOffset;
     private int defaultSelectedItem = 2;
     private int bezierWidth = 0;
     private int bezierHeight = 0;
+    private int positionIndex = 0;
+    private int repeatDrawCanvas = 0;
+    private double leftMainWidth = 0.05;
+    private double centerMainWidth = 0.90;
 
     private boolean runDefault = false;
     private boolean firstItemExpandable = false;
@@ -49,10 +55,10 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Objects
     private Context context;
-    private Paint mPaint = new Paint();
     private Canvas mCanvas;
-    RectF mRectF;
-    private ObjectAnimator moveSelectedItemBackgroundAnimator;
+
+    private ObjectAnimator frontMoveSelectedItemBackgroundAnimator;
+    private ValueAnimator backMoveSelectedItemBackgroundAnimator;
 
     private ValueAnimator expandSelectedItemFrameLayoutAnimator;
     private ValueAnimator moveDeSelectedItemAnimator;
@@ -125,16 +131,35 @@ public class FasationBottomNavigation extends ConstraintLayout {
         runDefault = true;
 
         if (newSelectedIndex != -1) {
-            bezierWidth = (int) (0.95 * emptyRelativeLayout.getWidth() / 5);
+            bezierWidth = (int) (centerMainWidth * emptyRelativeLayout.getWidth() / 5);
             bezierHeight = getHeight() - emptyRelativeLayout.getHeight() - convertDpToPx(context, 8);
-
-            int horizontallyOffset = (int) (0.025 * emptyRelativeLayout.getWidth());
 
             centerContent.setWidth(bezierWidth);
             centerContent.setHeight(bezierHeight);
             centerContent.setStartY(convertDpToPx(context, 8));
 
-            centerContent.setStartX(horizontallyOffset + 2 * bezierWidth);
+            int horizontallyOffset = (int) (leftMainWidth * emptyRelativeLayout.getWidth());
+
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            centerContent.setStartX(horizontallyOffset + newSelectedIndex * bezierWidth - positionIndex);
+            centerContent.draw(canvas);
+
+            mCanvas = canvas;
+            prepareSelectedItemBackgroundAnimation();
+        }
+    }
+
+    private void drawCanvas(Canvas canvas) {
+        int horizontallyOffset = (int) (leftMainWidth * emptyRelativeLayout.getWidth());
+
+        if (positionIndex < repeatDrawCanvas) {
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            centerContent.setStartX(horizontallyOffset + defaultSelectedItem * bezierWidth - positionIndex);
+            centerContent.draw(canvas);
+            positionIndex++;
+            invalidate();
+        } else {// if (positionIndex == repeatDrawCanvas)
+            centerContent.setStartX(horizontallyOffset + defaultSelectedItem * bezierWidth - positionIndex);
             centerContent.draw(canvas);
         }
     }
@@ -301,11 +326,28 @@ public class FasationBottomNavigation extends ConstraintLayout {
     }
 
     private void prepareSelectedItemBackgroundAnimation() {
-        int xCurrentPosition = imgNavigationBackgroundSelectedItem.getLeft();
-        int xNewPosition = (int) (selectedItemHorizontallyOffset + newSelectedIndex * emptyRelativeLayout.getWidth() * 0.95 / 5);
 
-        moveSelectedItemBackgroundAnimator = ObjectAnimator.ofFloat(imgNavigationBackgroundSelectedItem, "translationX", xNewPosition - xCurrentPosition);
-        moveSelectedItemBackgroundAnimator.setDuration(200);
+        int xCurrentPositionFront = imgNavigationBackgroundSelectedItem.getLeft();
+//        int xCurrentPositionBack = (int) centerContent.getTranslationX();
+
+        int xNewPositionFront = (int) (selectedItemHorizontallyOffset + newSelectedIndex * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
+        int xNewPositionBack = (int) (leftMainWidth * emptyRelativeLayout.getWidth() + newSelectedIndex * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
+
+        frontMoveSelectedItemBackgroundAnimator = ObjectAnimator.ofFloat(imgNavigationBackgroundSelectedItem, "translationX", xNewPositionFront - xCurrentPositionFront);
+
+//        centerContent.getPath().transform(new Matrix());
+
+//        backMoveSelectedItemBackgroundAnimator = ValueAnimator.ofInt(centerContent.xCoordinate(), xNewPositionBack);
+//
+//        backMoveSelectedItemBackgroundAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                mCanvas.translate((Integer) valueAnimator.getAnimatedValue(), centerContent.yCoordinate());
+//            }
+//        });
+//        backMoveSelectedItemBackgroundAnimator.setDuration(200);
+
+        frontMoveSelectedItemBackgroundAnimator.setDuration(200);
     }
 
     private View getViewBasedIndex(int index) {
@@ -325,9 +367,30 @@ public class FasationBottomNavigation extends ConstraintLayout {
         }
     }
 
+    private int getDrawableIdBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return R.drawable.home_24;
+            case 1:
+                return R.drawable.near_me_24;
+            case 2:
+                return R.drawable.magnify_24;
+            case 3:
+                return R.drawable.heart_24;
+            case 4:
+                return R.drawable.pencil_24;
+            default:
+                return -1;
+        }
+    }
+
     private void runAnimationOnClickItem() {
-        if (moveSelectedItemBackgroundAnimator != null)
-            moveSelectedItemBackgroundAnimator.start();
+        setFloatingActionButtonIconWithColor();
+        invalidate();
+        if (frontMoveSelectedItemBackgroundAnimator != null)// && backMoveSelectedItemBackgroundAnimator != null) {
+            frontMoveSelectedItemBackgroundAnimator.start();
+//            backMoveSelectedItemBackgroundAnimator.start();
+//        }
 
 //        if (expandSelectedItemFrameLayoutAnimator != null)
 //            expandSelectedItemFrameLayoutAnimator.start();
@@ -365,8 +428,8 @@ public class FasationBottomNavigation extends ConstraintLayout {
         newSelectedIndex = defaultSelectedItemPosition;
         prepareSelectItemAnimation(getViewBasedIndex(defaultSelectedItemPosition));
         runAnimationOnClickItem();
-        selectedItemHorizontallyOffset = (int) (imgNavigationBackgroundSelectedItem.getLeft() - 2 * emptyRelativeLayout.getWidth() * 0.95 / 5);
-        prepareSelectedItemBackgroundAnimation();
+        selectedItemHorizontallyOffset = (int) (imgNavigationBackgroundSelectedItem.getLeft() - 2 * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
+//        prepareSelectedItemBackgroundAnimation();
     }
 
     /**
@@ -441,6 +504,19 @@ public class FasationBottomNavigation extends ConstraintLayout {
             default:
                 return SELECTED_ITEM_EXPANDABLE_FAILED;
         }
+    }
+
+    private void setFloatingActionButtonIconWithColor() {
+
+        VectorChildFinder vector;
+
+        if (lastSelectedIndex != -1) {
+            vector = new VectorChildFinder(context, getDrawableIdBasedIndex(lastSelectedIndex), (ImageView) lastSelectedView);
+            vector.findPathByName("main_path").setFillColor(getResources().getColor(R.color.fasation_inactive_item_icon_color));
+        }
+
+        vector = new VectorChildFinder(context, getDrawableIdBasedIndex(newSelectedIndex), (ImageView) newSelectedView);
+        vector.findPathByName("main_path").setFillColor(getResources().getColor(R.color.fasation_active_item_icon_color));
     }
     //endregion Declare Methods
 

@@ -32,8 +32,8 @@ class BezierView extends RelativeLayout {
 
     private int bezierWidth = 0, bezierHeight = 0;
     private int startX = 0, startY = 0;
-    private int topMeasure = 0;
     private int backgroundColor;
+    int startPointX = 0, startPointY = 0;
 
     private Context context;
     private boolean isLinear = false;
@@ -65,8 +65,8 @@ class BezierView extends RelativeLayout {
         paint.setColor(backgroundColor);
         path.reset();
 
-        int startPointX = startX - 2 * offsetX;
-        int startPointY = startY + bezierHeight;
+        startPointX = startX - 2 * offsetX;
+        startPointY = startY + bezierHeight;
 
         int endPointX = startX + bezierWidth + 2 * offsetX;
         int endPointY = startY + bezierHeight;
@@ -127,6 +127,18 @@ class BezierView extends RelativeLayout {
 
     public void setStartY(int yPosition) {
         startY = yPosition;
+    }
+
+    public Path getPath(){
+        return path;
+    }
+
+    public int xCoordinate() {
+        return startPointX;
+    }
+
+    public int yCoordinate() {
+        return startY;
     }
 }
 

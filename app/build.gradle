@@ -37,6 +37,8 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.7.2'
+
+    implementation 'com.github.devsideal:VectorChildFinder:1.0.0'
 }
 repositories {
     mavenCentral()
