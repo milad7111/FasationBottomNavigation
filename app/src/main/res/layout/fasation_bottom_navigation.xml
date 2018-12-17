@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/transparent"
-    android:clickable="true"
-    android:focusable="true"
     android:paddingTop="8dp">
 
     <RelativeLayout
@@ -14,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@drawable/bottom_sheet_background"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageView
@@ -23,82 +23,154 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:background="@color/transparent"
+        android:clickable="true"
         android:contentDescription="@string/image_view_content_description_img_navigation_background_selected_item"
+        android:focusable="true"
         android:src="@drawable/background_selected_item"
         app:layout_constraintBottom_toBottomOf="@id/guideline8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/guideline8" />
 
-    <ImageView
-        android:id="@+id/img_navigation_items_first"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/ctl_navigation_items_first"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
-        android:contentDescription="@string/image_view_content_description_first_image_view"
         android:focusable="true"
-        android:src="@drawable/home_24"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline1" />
+        app:layout_constraintStart_toStartOf="@+id/guideline1">
 
-    <ImageView
-        android:id="@+id/img_navigation_items_second"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/img_navigation_items_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:clickable="true"
+            android:contentDescription="@string/image_view_content_description_first_image_view"
+            android:focusable="true"
+            android:src="@drawable/home_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/ctl_navigation_items_second"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
-        android:contentDescription="@string/image_view_content_description_second_image_view"
         android:focusable="true"
-        android:src="@drawable/near_me_24"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toEndOf="@+id/guideline2" />
+        app:layout_constraintStart_toStartOf="@+id/guideline2">
 
-    <ImageView
-        android:id="@+id/img_navigation_items_third"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/img_navigation_items_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:clickable="true"
+            android:contentDescription="@string/image_view_content_description_second_image_view"
+            android:focusable="true"
+            android:src="@drawable/near_me_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/ctl_navigation_items_third"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
-        android:contentDescription="@string/image_view_content_description_third_image_view"
         android:focusable="true"
-        android:src="@drawable/magnify_24"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
-        app:layout_constraintStart_toEndOf="@+id/guideline3" />
+        app:layout_constraintStart_toStartOf="@+id/guideline3">
 
-    <ImageView
-        android:id="@+id/img_navigation_items_fourth"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/img_navigation_items_third"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:clickable="true"
+            android:contentDescription="@string/image_view_content_description_third_image_view"
+            android:focusable="true"
+            android:src="@drawable/magnify_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/ctl_navigation_items_fourth"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
-        android:contentDescription="@string/image_view_content_description_fourth_image_view"
         android:focusable="true"
-        android:src="@drawable/heart_24"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintStart_toEndOf="@+id/guideline4" />
+        app:layout_constraintStart_toStartOf="@+id/guideline4">
 
-    <ImageView
-        android:id="@+id/img_navigation_items_fifth"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/img_navigation_items_fourth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:clickable="true"
+            android:contentDescription="@string/image_view_content_description_fourth_image_view"
+            android:focusable="true"
+            android:src="@drawable/heart_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/ctl_navigation_items_fifth"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:background="@color/transparent"
         android:clickable="true"
-        android:contentDescription="@string/image_view_content_description_fifth_image_view"
         android:focusable="true"
-        android:src="@drawable/pencil_24"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
-        app:layout_constraintEnd_toEndOf="@+id/guideline6"
-        app:layout_constraintStart_toEndOf="@+id/guideline5" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline6"
+        app:layout_constraintStart_toStartOf="@+id/guideline5">
+
+        <ImageView
+            android:id="@+id/img_navigation_items_fifth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:clickable="true"
+            android:contentDescription="@string/image_view_content_description_fifth_image_view"
+            android:focusable="true"
+            android:src="@drawable/pencil_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline1"
@@ -155,12 +227,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_end="56dp" />
-
-    <!--<FrameLayout-->
-    <!--android:id="@+id/bottom_frame_layout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:background="@color/fasation_bottom_navigation_background_color"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent" />-->
 
 </android.support.constraint.ConstraintLayout>

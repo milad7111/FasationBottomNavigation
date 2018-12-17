@@ -17,7 +17,7 @@ import android.widget.RelativeLayout;
 
 import com.devs.vectorchildfinder.VectorChildFinder;
 
-public class FasationBottomNavigation extends ConstraintLayout {
+public class FasationBottomNavigation extends ConstraintLayout implements View.OnClickListener {
 
     //region Declare Constants
     private static final int NOT_DEFINED = -777;
@@ -29,16 +29,15 @@ public class FasationBottomNavigation extends ConstraintLayout {
     //endregion Declare Constants
 
     //region Declare Variables
-    private int lastSelectedIndex = -1;
-    private int newSelectedIndex = 2;
     private int selectedItemOffset = 26; //dp
-    private int defaultItemOffset = 16; //dp
+    private int defaultItemOffset = 0; //dp
     private int selectedItemHorizontallyOffset;
     private int defaultSelectedItem = 2;
+    private int lastSelectedIndex = -1;
+    private int newSelectedIndex = defaultSelectedItem;
     private int bezierWidth = 0;
     private int bezierHeight = 0;
     private int positionIndex = 0;
-    private int repeatDrawCanvas = 0;
     private double leftMainWidth = 0.05;
     private double centerMainWidth = 0.90;
 
@@ -55,12 +54,9 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Objects
     private Context context;
-    private Canvas mCanvas;
 
     private ObjectAnimator frontMoveSelectedItemBackgroundAnimator;
-    private ValueAnimator backMoveSelectedItemBackgroundAnimator;
 
-    private ValueAnimator expandSelectedItemFrameLayoutAnimator;
     private ValueAnimator moveDeSelectedItemAnimator;
     private ValueAnimator moveSelectedItemAnimator;
 
@@ -70,16 +66,26 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
     //region Declare Views
     View rootView;
-    View lastSelectedView;
-    View newSelectedView;
+
+    ImageView lastSelectedImageView;
+    ImageView newSelectedImageView;
+
+    View lastSelectedParentView;
+    View newSelectedParentView;
 
     ImageView imgNavigationBackgroundSelectedItem;
 
-    ImageView firstCustomItemView;
-    ImageView secondCustomItemView;
-    ImageView thirdCustomItemView;
-    ImageView fourthCustomItemView;
-    ImageView fifthCustomItemView;
+    ConstraintLayout firstCustomItemView;
+    ConstraintLayout secondCustomItemView;
+    ConstraintLayout thirdCustomItemView;
+    ConstraintLayout fourthCustomItemView;
+    ConstraintLayout fifthCustomItemView;
+
+    ImageView firstImageView;
+    ImageView secondImageView;
+    ImageView thirdImageView;
+    ImageView fourthImageView;
+    ImageView fifthImageView;
 
     RelativeLayout emptyRelativeLayout;
     private BezierView centerContent;
@@ -120,7 +126,7 @@ public class FasationBottomNavigation extends ConstraintLayout {
     }
     //endregion Constructor
 
-
+    //region Main Callbacks
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -144,25 +150,10 @@ public class FasationBottomNavigation extends ConstraintLayout {
             centerContent.setStartX(horizontallyOffset + newSelectedIndex * bezierWidth - positionIndex);
             centerContent.draw(canvas);
 
-            mCanvas = canvas;
             prepareSelectedItemBackgroundAnimation();
         }
     }
-
-    private void drawCanvas(Canvas canvas) {
-        int horizontallyOffset = (int) (leftMainWidth * emptyRelativeLayout.getWidth());
-
-        if (positionIndex < repeatDrawCanvas) {
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            centerContent.setStartX(horizontallyOffset + defaultSelectedItem * bezierWidth - positionIndex);
-            centerContent.draw(canvas);
-            positionIndex++;
-            invalidate();
-        } else {// if (positionIndex == repeatDrawCanvas)
-            centerContent.setStartX(horizontallyOffset + defaultSelectedItem * bezierWidth - positionIndex);
-            centerContent.draw(canvas);
-        }
-    }
+    //endregion Main Callbacks
 
     /**
      * Creating bezier view with params
@@ -180,177 +171,82 @@ public class FasationBottomNavigation extends ConstraintLayout {
 
         rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
         emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
-//        bottomFrameLayout = rootView.findViewById(R.id.bottom_frame_layout);
         centerContent = buildBezierView();
+
+        firstCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_first);
+        secondCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_second);
+        thirdCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_third);
+        fourthCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_fourth);
+        fifthCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_fifth);
 
         imgNavigationBackgroundSelectedItem = rootView.findViewById(R.id.img_navigation_background_selected_item);
 
-        firstCustomItemView = rootView.findViewById(R.id.img_navigation_items_first);
-        secondCustomItemView = rootView.findViewById(R.id.img_navigation_items_second);
-        thirdCustomItemView = rootView.findViewById(R.id.img_navigation_items_third);
-        fourthCustomItemView = rootView.findViewById(R.id.img_navigation_items_fourth);
-        fifthCustomItemView = rootView.findViewById(R.id.img_navigation_items_fifth);
+        firstImageView = rootView.findViewById(R.id.img_navigation_items_first);
+        secondImageView = rootView.findViewById(R.id.img_navigation_items_second);
+        thirdImageView = rootView.findViewById(R.id.img_navigation_items_third);
+        fourthImageView = rootView.findViewById(R.id.img_navigation_items_fourth);
+        fifthImageView = rootView.findViewById(R.id.img_navigation_items_fifth);
 
-        firstCustomItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (newSelectedIndex != 0) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 0;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation(view);
-                    handleExpandableItem();
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                }
-            }
-        });
+        firstCustomItemView.setOnClickListener(this);
+        secondCustomItemView.setOnClickListener(this);
+        thirdCustomItemView.setOnClickListener(this);
+        fourthCustomItemView.setOnClickListener(this);
+        fifthCustomItemView.setOnClickListener(this);
 
-        secondCustomItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (newSelectedIndex != 1) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 1;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation(view);
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                }
-            }
-        });
-
-        thirdCustomItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (newSelectedIndex != 2) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 2;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation(view);
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                }
-            }
-        });
-
-        fourthCustomItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (newSelectedIndex != 3) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 3;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation(view);
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                }
-            }
-        });
-
-        fifthCustomItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (newSelectedIndex != 4) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 4;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation(view);
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                }
-            }
-        });
-    }
-
-    private void handleExpandableItem() {
-//        final ConstraintLayout.LayoutParams mLayoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, convertDpToPx(context, 200));
-//        expandSelectedItemFrameLayoutAnimator = ValueAnimator.ofInt(0, convertDpToPx(context, 200));
-//        expandSelectedItemFrameLayoutAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                mLayoutParams.height = (Integer) valueAnimator.getAnimatedValue();
-//                bottomFrameLayout.setLayoutParams(mLayoutParams);
-//                bottomFrameLayout.requestLayout();
-//            }
-//        });
-//        expandSelectedItemFrameLayoutAnimator.setDuration(1000);
+        firstImageView.setOnClickListener(this);
+        secondImageView.setOnClickListener(this);
+        thirdImageView.setOnClickListener(this);
+        fourthImageView.setOnClickListener(this);
+        fifthImageView.setOnClickListener(this);
     }
 
     private void prepareDeSelectItemAnimation() {
 
-        lastSelectedView = getViewBasedIndex(lastSelectedIndex);
+        lastSelectedImageView = getImageViewViewBasedIndex(lastSelectedIndex);
+        lastSelectedParentView = getParentViewViewBasedIndex(lastSelectedIndex);
 
-        if (lastSelectedView != null) {
+        if (lastSelectedParentView != null) {
             if (moveDeSelectedItemAnimator != null && moveDeSelectedItemAnimator.isRunning())
                 moveDeSelectedItemAnimator.end();
 
-            final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) lastSelectedView.getLayoutParams();
+            final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) lastSelectedParentView.getLayoutParams();
             moveDeSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset));
             moveDeSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                     mLayoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
-                    lastSelectedView.requestLayout();
+                    lastSelectedParentView.requestLayout();
                 }
             });
             moveDeSelectedItemAnimator.setDuration(500);
 
-            setImageSizeAnimation(lastSelectedView, 200, SET_SMALLER_SIZE);
+            setImageSizeAnimation(lastSelectedImageView, 200, SET_SMALLER_SIZE);
         }
     }
 
-    private void prepareSelectItemAnimation(final View view) {
-        newSelectedView = view;
+    private void prepareSelectItemAnimation() {
+
+        newSelectedImageView = getImageViewViewBasedIndex(newSelectedIndex);
+        newSelectedParentView = getParentViewViewBasedIndex(newSelectedIndex);
 
         if (moveSelectedItemAnimator != null && moveSelectedItemAnimator.isRunning())
             moveSelectedItemAnimator.end();
 
-        final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) newSelectedView.getLayoutParams();
+        final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) newSelectedParentView.getLayoutParams();
         moveSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset) + convertDpToPx(context, selectedItemOffset));
         moveSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 mLayoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
-                newSelectedView.requestLayout();
+                newSelectedParentView.requestLayout();
             }
         });
         moveSelectedItemAnimator.setDuration(500);
 
-        setImageSizeAnimation(newSelectedView, 200, SET_BIGGER_SIZE);
+        setImageSizeAnimation(newSelectedImageView, 200, SET_BIGGER_SIZE);
     }
 
-    private void prepareSelectedItemBackgroundAnimation() {
-
-        int xCurrentPositionFront = imgNavigationBackgroundSelectedItem.getLeft();
-//        int xCurrentPositionBack = (int) centerContent.getTranslationX();
-
-        int xNewPositionFront = (int) (selectedItemHorizontallyOffset + newSelectedIndex * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
-        int xNewPositionBack = (int) (leftMainWidth * emptyRelativeLayout.getWidth() + newSelectedIndex * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
-
-        frontMoveSelectedItemBackgroundAnimator = ObjectAnimator.ofFloat(imgNavigationBackgroundSelectedItem, "translationX", xNewPositionFront - xCurrentPositionFront);
-
-//        centerContent.getPath().transform(new Matrix());
-
-//        backMoveSelectedItemBackgroundAnimator = ValueAnimator.ofInt(centerContent.xCoordinate(), xNewPositionBack);
-//
-//        backMoveSelectedItemBackgroundAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                mCanvas.translate((Integer) valueAnimator.getAnimatedValue(), centerContent.yCoordinate());
-//            }
-//        });
-//        backMoveSelectedItemBackgroundAnimator.setDuration(200);
-
-        frontMoveSelectedItemBackgroundAnimator.setDuration(200);
-    }
-
-    private View getViewBasedIndex(int index) {
+    private View getParentViewViewBasedIndex(int index) {
         switch (index) {
             case 0:
                 return firstCustomItemView;
@@ -362,6 +258,32 @@ public class FasationBottomNavigation extends ConstraintLayout {
                 return fourthCustomItemView;
             case 4:
                 return fifthCustomItemView;
+            default:
+                return null;
+        }
+    }
+
+    private void prepareSelectedItemBackgroundAnimation() {
+
+        int xCurrentPosition = imgNavigationBackgroundSelectedItem.getLeft();
+        int xNewPosition = (int) (selectedItemHorizontallyOffset + newSelectedIndex * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
+
+        frontMoveSelectedItemBackgroundAnimator = ObjectAnimator.ofFloat(imgNavigationBackgroundSelectedItem, "translationX", xNewPosition - xCurrentPosition);
+        frontMoveSelectedItemBackgroundAnimator.setDuration(200);
+    }
+
+    private ImageView getImageViewViewBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return firstImageView;
+            case 1:
+                return secondImageView;
+            case 2:
+                return thirdImageView;
+            case 3:
+                return fourthImageView;
+            case 4:
+                return fifthImageView;
             default:
                 return null;
         }
@@ -387,13 +309,8 @@ public class FasationBottomNavigation extends ConstraintLayout {
     private void runAnimationOnClickItem() {
         setFloatingActionButtonIconWithColor();
         invalidate();
-        if (frontMoveSelectedItemBackgroundAnimator != null)// && backMoveSelectedItemBackgroundAnimator != null) {
+        if (frontMoveSelectedItemBackgroundAnimator != null)
             frontMoveSelectedItemBackgroundAnimator.start();
-//            backMoveSelectedItemBackgroundAnimator.start();
-//        }
-
-//        if (expandSelectedItemFrameLayoutAnimator != null)
-//            expandSelectedItemFrameLayoutAnimator.start();
 
         if (moveDeSelectedItemAnimator != null)
             moveDeSelectedItemAnimator.start();
@@ -401,11 +318,11 @@ public class FasationBottomNavigation extends ConstraintLayout {
         if (moveSelectedItemAnimator != null)
             moveSelectedItemAnimator.start();
 
-        if (lastSelectedView != null)
-            lastSelectedView.startAnimation(lastSelectedViewReSizeAnimation);
+        if (lastSelectedImageView != null)
+            lastSelectedImageView.startAnimation(lastSelectedViewReSizeAnimation);
 
-        if (newSelectedView != null)
-            newSelectedView.startAnimation(newSelectedViewReSizeAnimation);
+        if (newSelectedImageView != null)
+            newSelectedImageView.startAnimation(newSelectedViewReSizeAnimation);
     }
 
     private void setImageSizeAnimation(View view, int duration, boolean finalSizeStatus) {
@@ -426,10 +343,9 @@ public class FasationBottomNavigation extends ConstraintLayout {
      */
     public void initDefaultItem(int defaultSelectedItemPosition) {
         newSelectedIndex = defaultSelectedItemPosition;
-        prepareSelectItemAnimation(getViewBasedIndex(defaultSelectedItemPosition));
+        prepareSelectItemAnimation();
         runAnimationOnClickItem();
         selectedItemHorizontallyOffset = (int) (imgNavigationBackgroundSelectedItem.getLeft() - 2 * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
-//        prepareSelectedItemBackgroundAnimation();
     }
 
     /**
@@ -511,12 +427,78 @@ public class FasationBottomNavigation extends ConstraintLayout {
         VectorChildFinder vector;
 
         if (lastSelectedIndex != -1) {
-            vector = new VectorChildFinder(context, getDrawableIdBasedIndex(lastSelectedIndex), (ImageView) lastSelectedView);
+            vector = new VectorChildFinder(context, getDrawableIdBasedIndex(lastSelectedIndex), (ImageView) lastSelectedImageView);
             vector.findPathByName("main_path").setFillColor(getResources().getColor(R.color.fasation_inactive_item_icon_color));
         }
 
-        vector = new VectorChildFinder(context, getDrawableIdBasedIndex(newSelectedIndex), (ImageView) newSelectedView);
+        vector = new VectorChildFinder(context, getDrawableIdBasedIndex(newSelectedIndex), (ImageView) newSelectedImageView);
         vector.findPathByName("main_path").setFillColor(getResources().getColor(R.color.fasation_active_item_icon_color));
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.img_navigation_items_first:
+            case R.id.ctl_navigation_items_first:
+                if (newSelectedIndex != 0) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 0;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation();
+                    prepareSelectedItemBackgroundAnimation();
+                    runAnimationOnClickItem();
+                    invalidate();
+                }
+                break;
+            case R.id.img_navigation_items_second:
+            case R.id.ctl_navigation_items_second:
+                if (newSelectedIndex != 1) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 1;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation();
+                    prepareSelectedItemBackgroundAnimation();
+                    runAnimationOnClickItem();
+                    invalidate();
+                }
+                break;
+            case R.id.img_navigation_items_third:
+            case R.id.ctl_navigation_items_third:
+                if (newSelectedIndex != 2) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 2;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation();
+                    prepareSelectedItemBackgroundAnimation();
+                    runAnimationOnClickItem();
+                    invalidate();
+                }
+                break;
+            case R.id.img_navigation_items_fourth:
+            case R.id.ctl_navigation_items_fourth:
+                if (newSelectedIndex != 3) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 3;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation();
+                    prepareSelectedItemBackgroundAnimation();
+                    runAnimationOnClickItem();
+                    invalidate();
+                }
+                break;
+            case R.id.img_navigation_items_fifth:
+            case R.id.ctl_navigation_items_fifth:
+                if (newSelectedIndex != 4) {
+                    lastSelectedIndex = newSelectedIndex;
+                    newSelectedIndex = 4;
+                    prepareDeSelectItemAnimation();
+                    prepareSelectItemAnimation();
+                    prepareSelectedItemBackgroundAnimation();
+                    runAnimationOnClickItem();
+                    invalidate();
+                }
+                break;
+        }
     }
     //endregion Declare Methods
 
