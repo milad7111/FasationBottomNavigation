@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private MapView mapView;
     private MapboxMap map;
+    private FasationBottomNavigation fasationBottomNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +22,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this::onMapReady);
+
+        getSupportActionBar().hide();
+
+        fasationBottomNavigation = findViewById(R.id.fasationBottomNavigation);
+//        fasationBottomNavigation.getItemByIndex()
     }
 
     @Override
@@ -29,5 +35,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.getUiSettings().setLogoEnabled(false);
         map.getUiSettings().setAttributionEnabled(false);
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.732653, 51.422558), 15));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        fasationBottomNavigation.onDestroy();
     }
 }

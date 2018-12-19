@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
@@ -10,7 +11,7 @@
     <RelativeLayout
         android:id="@+id/empty_layout"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="40dp"
         android:background="@drawable/bottom_sheet_background"
         android:clickable="true"
         android:focusable="true"
@@ -20,29 +21,28 @@
         android:id="@+id/img_navigation_background_selected_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/transparent"
+        android:background="@color/colorAccent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_img_navigation_background_selected_item"
         android:focusable="true"
         android:src="@drawable/background_selected_item"
-        app:layout_constraintBottom_toBottomOf="@id/guideline8"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline8" />
+        app:layout_constraintBottom_toTopOf="@id/empty_layout"
+        app:layout_constraintEnd_toStartOf="@+id/ctl_navigation_items_fourth"
+        app:layout_constraintStart_toEndOf="@+id/ctl_navigation_items_second"
+        app:layout_constraintTop_toTopOf="@id/empty_layout" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ctl_navigation_items_first"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:focusable="true"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline1">
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/img_navigation_items_first"
@@ -52,25 +52,35 @@
             android:clickable="true"
             android:contentDescription="@string/image_view_content_description_first_image_view"
             android:focusable="true"
-            android:src="@drawable/home_24"
+            android:src="@drawable/ic_layer"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_badge_navigation_items_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_background"
+            android:textColor="@color/fasation_bottom_navigation_badge_text_color"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/img_navigation_items_first"
+            app:layout_constraintTop_toTopOf="@+id/img_navigation_items_first" />
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ctl_navigation_items_second"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:focusable="true"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/guideline2">
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/img_navigation_items_second"
@@ -80,25 +90,35 @@
             android:clickable="true"
             android:contentDescription="@string/image_view_content_description_second_image_view"
             android:focusable="true"
-            android:src="@drawable/near_me_24"
+            android:src="@drawable/ic_route"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_badge_navigation_items_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_background"
+            android:textColor="@color/fasation_bottom_navigation_badge_text_color"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/img_navigation_items_second"
+            app:layout_constraintTop_toTopOf="@+id/img_navigation_items_second" />
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ctl_navigation_items_third"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:focusable="true"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
-        app:layout_constraintStart_toStartOf="@+id/guideline3">
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/img_navigation_items_third"
@@ -108,25 +128,35 @@
             android:clickable="true"
             android:contentDescription="@string/image_view_content_description_third_image_view"
             android:focusable="true"
-            android:src="@drawable/magnify_24"
+            android:src="@drawable/ic_search"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_badge_navigation_items_third"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_background"
+            android:textColor="@color/fasation_bottom_navigation_badge_text_color"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/img_navigation_items_third"
+            app:layout_constraintTop_toTopOf="@+id/img_navigation_items_third" />
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ctl_navigation_items_fourth"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:focusable="true"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintStart_toStartOf="@+id/guideline4">
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/img_navigation_items_fourth"
@@ -136,25 +166,34 @@
             android:clickable="true"
             android:contentDescription="@string/image_view_content_description_fourth_image_view"
             android:focusable="true"
-            android:src="@drawable/heart_24"
+            android:src="@drawable/ic_notification"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_badge_navigation_items_fourth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_background"
+            android:textColor="@color/fasation_bottom_navigation_badge_text_color"
+            app:layout_constraintEnd_toEndOf="@+id/img_navigation_items_fourth"
+            app:layout_constraintTop_toTopOf="@+id/img_navigation_items_fourth" />
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ctl_navigation_items_fifth"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/transparent"
         android:clickable="true"
         android:focusable="true"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
-        app:layout_constraintStart_toStartOf="@+id/guideline5">
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/img_navigation_items_fifth"
@@ -164,11 +203,20 @@
             android:clickable="true"
             android:contentDescription="@string/image_view_content_description_fifth_image_view"
             android:focusable="true"
-            android:src="@drawable/pencil_24"
+            android:src="@drawable/ic_drawer_menu"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_badge_navigation_items_fifth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_background"
+            android:textColor="@color/fasation_bottom_navigation_badge_text_color"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/img_navigation_items_fifth"
+            app:layout_constraintTop_toTopOf="@+id/img_navigation_items_fifth" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -221,11 +269,11 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="1" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="56dp" />
+    <!--<android.support.constraint.Guideline-->
+        <!--android:id="@+id/guideline8"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--app:layout_constraintGuide_end="40dp" />-->
 
 </android.support.constraint.ConstraintLayout>

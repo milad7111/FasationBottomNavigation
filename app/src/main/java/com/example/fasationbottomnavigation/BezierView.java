@@ -80,7 +80,7 @@ class BezierView extends RelativeLayout {
 
             int x3 = startX + bezierWidth / 2, y3 = startY + offsetY;
 
-            int x4 = (int) (startX + bezierWidth * 3.0 / 4 + 4 * offsetX), y4 = startY + offsetY;
+            int x4 = (int) (startX + bezierWidth / 4.0 * 3 + 4 * offsetX), y4 = startY + offsetY;
             int x5 = startX + bezierWidth * 3 / 4 + 3 * offsetX, y5 = startY + bezierHeight;
 
             path.cubicTo(x1, y1, x2, y2, x3, y3);

@@ -7,7 +7,7 @@
 
     <path
         android:name="main_path"
-        android:fillColor="@color/fasation_inactive_item_icon_color"
+        android:fillColor="@color/fasation_bottom_navigation_inactive_item_icon_color"
         android:pathData="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
 
 </vector>

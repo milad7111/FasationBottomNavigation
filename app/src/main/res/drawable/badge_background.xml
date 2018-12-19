@@ -4,12 +4,12 @@
 
     <gradient
         android:angle="270"
-        android:startColor="@color/fasation_bottom_navigation_active_item_background_color_top"
         android:endColor="@color/fasation_bottom_navigation_active_item_background_color_bottom"
+        android:startColor="@color/fasation_bottom_navigation_active_item_background_color_top"
         android:type="linear" />
 
     <size
-        android:width="48dp"
-        android:height="48dp" />
+        android:width="10dp"
+        android:height="10dp" />
 
 </shape>

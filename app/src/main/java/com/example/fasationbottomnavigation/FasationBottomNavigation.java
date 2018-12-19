@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.devs.vectorchildfinder.VectorChildFinder;
 
@@ -29,33 +30,29 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
     //endregion Declare Constants
 
     //region Declare Variables
-    private int selectedItemOffset = 26; //dp
+    private int selectedItemOffset = 16; //dp
     private int defaultItemOffset = 0; //dp
     private int selectedItemHorizontallyOffset;
-    private int defaultSelectedItem = 2;
+
+    private int defaultItemIconSize = 24; //dp
+
+    private int defaultSelectedItemIndex = 2;
     private int lastSelectedIndex = -1;
-    private int newSelectedIndex = defaultSelectedItem;
+    private int newSelectedIndex = defaultSelectedItemIndex;
+
     private int bezierWidth = 0;
     private int bezierHeight = 0;
-    private int positionIndex = 0;
-    private double leftMainWidth = 0.05;
+
     private double centerMainWidth = 0.90;
+    private double leftMainWidth = (1.0 - centerMainWidth) / 2.0;
 
-    private boolean runDefault = false;
-    private boolean firstItemExpandable = false;
-    private boolean secondItemExpandable = false;
-    private boolean thirdItemExpandable = false;
-    private boolean fourthItemExpandable = false;
-    private boolean fifthItemExpandable = false;
+    private boolean defaultItemSelectedStatus = false;
     //endregion Declare Variables
-
-    //region Declarer Arrays & Lists
-    //endregion Declarer Arrays & Lists
 
     //region Declare Objects
     private Context context;
 
-    private ObjectAnimator frontMoveSelectedItemBackgroundAnimator;
+    private ObjectAnimator moveSelectedItemBackgroundAnimator;
 
     private ValueAnimator moveDeSelectedItemAnimator;
     private ValueAnimator moveSelectedItemAnimator;
@@ -87,9 +84,14 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
     ImageView fourthImageView;
     ImageView fifthImageView;
 
-    RelativeLayout emptyRelativeLayout;
+    ImageView firstBadgeImageView;
+    ImageView secondBadgeImageView;
+    ImageView thirdBadgeImageView;
+    ImageView fourthBadgeImageView;
+    ImageView fifthBadgeImageView;
+
+    private RelativeLayout emptyRelativeLayout;
     private BezierView centerContent;
-    FrameLayout bottomFrameLayout;
     //endregion Declare Views
 
     //region Custom Attributes
@@ -131,10 +133,10 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (!runDefault)
-            initDefaultItem(defaultSelectedItem);
+        if (!defaultItemSelectedStatus)
+            initDefaultItem(defaultSelectedItemIndex);
 
-        runDefault = true;
+        defaultItemSelectedStatus = true;
 
         if (newSelectedIndex != -1) {
             bezierWidth = (int) (centerMainWidth * emptyRelativeLayout.getWidth() / 5);
@@ -147,292 +149,11 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
             int horizontallyOffset = (int) (leftMainWidth * emptyRelativeLayout.getWidth());
 
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            centerContent.setStartX(horizontallyOffset + newSelectedIndex * bezierWidth - positionIndex);
+            centerContent.setStartX(horizontallyOffset + newSelectedIndex * bezierWidth);
             centerContent.draw(canvas);
 
             prepareSelectedItemBackgroundAnimation();
         }
-    }
-    //endregion Main Callbacks
-
-    /**
-     * Creating bezier view with params
-     *
-     * @return created bezier view
-     */
-    private BezierView buildBezierView() {
-        BezierView bezierView = new BezierView(context, ContextCompat.getColor(context, R.color.fasation_bottom_navigation_background_color));
-        bezierView.build(bezierWidth, bezierHeight, false);
-        return bezierView;
-    }
-
-    //region Declare Methods
-    private void init(final Context context) {
-
-        rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
-        emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
-        centerContent = buildBezierView();
-
-        firstCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_first);
-        secondCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_second);
-        thirdCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_third);
-        fourthCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_fourth);
-        fifthCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_fifth);
-
-        imgNavigationBackgroundSelectedItem = rootView.findViewById(R.id.img_navigation_background_selected_item);
-
-        firstImageView = rootView.findViewById(R.id.img_navigation_items_first);
-        secondImageView = rootView.findViewById(R.id.img_navigation_items_second);
-        thirdImageView = rootView.findViewById(R.id.img_navigation_items_third);
-        fourthImageView = rootView.findViewById(R.id.img_navigation_items_fourth);
-        fifthImageView = rootView.findViewById(R.id.img_navigation_items_fifth);
-
-        firstCustomItemView.setOnClickListener(this);
-        secondCustomItemView.setOnClickListener(this);
-        thirdCustomItemView.setOnClickListener(this);
-        fourthCustomItemView.setOnClickListener(this);
-        fifthCustomItemView.setOnClickListener(this);
-
-        firstImageView.setOnClickListener(this);
-        secondImageView.setOnClickListener(this);
-        thirdImageView.setOnClickListener(this);
-        fourthImageView.setOnClickListener(this);
-        fifthImageView.setOnClickListener(this);
-    }
-
-    private void prepareDeSelectItemAnimation() {
-
-        lastSelectedImageView = getImageViewViewBasedIndex(lastSelectedIndex);
-        lastSelectedParentView = getParentViewViewBasedIndex(lastSelectedIndex);
-
-        if (lastSelectedParentView != null) {
-            if (moveDeSelectedItemAnimator != null && moveDeSelectedItemAnimator.isRunning())
-                moveDeSelectedItemAnimator.end();
-
-            final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) lastSelectedParentView.getLayoutParams();
-            moveDeSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset));
-            moveDeSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    mLayoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
-                    lastSelectedParentView.requestLayout();
-                }
-            });
-            moveDeSelectedItemAnimator.setDuration(500);
-
-            setImageSizeAnimation(lastSelectedImageView, 200, SET_SMALLER_SIZE);
-        }
-    }
-
-    private void prepareSelectItemAnimation() {
-
-        newSelectedImageView = getImageViewViewBasedIndex(newSelectedIndex);
-        newSelectedParentView = getParentViewViewBasedIndex(newSelectedIndex);
-
-        if (moveSelectedItemAnimator != null && moveSelectedItemAnimator.isRunning())
-            moveSelectedItemAnimator.end();
-
-        final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) newSelectedParentView.getLayoutParams();
-        moveSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset) + convertDpToPx(context, selectedItemOffset));
-        moveSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                mLayoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
-                newSelectedParentView.requestLayout();
-            }
-        });
-        moveSelectedItemAnimator.setDuration(500);
-
-        setImageSizeAnimation(newSelectedImageView, 200, SET_BIGGER_SIZE);
-    }
-
-    private View getParentViewViewBasedIndex(int index) {
-        switch (index) {
-            case 0:
-                return firstCustomItemView;
-            case 1:
-                return secondCustomItemView;
-            case 2:
-                return thirdCustomItemView;
-            case 3:
-                return fourthCustomItemView;
-            case 4:
-                return fifthCustomItemView;
-            default:
-                return null;
-        }
-    }
-
-    private void prepareSelectedItemBackgroundAnimation() {
-
-        int xCurrentPosition = imgNavigationBackgroundSelectedItem.getLeft();
-        int xNewPosition = (int) (selectedItemHorizontallyOffset + newSelectedIndex * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
-
-        frontMoveSelectedItemBackgroundAnimator = ObjectAnimator.ofFloat(imgNavigationBackgroundSelectedItem, "translationX", xNewPosition - xCurrentPosition);
-        frontMoveSelectedItemBackgroundAnimator.setDuration(200);
-    }
-
-    private ImageView getImageViewViewBasedIndex(int index) {
-        switch (index) {
-            case 0:
-                return firstImageView;
-            case 1:
-                return secondImageView;
-            case 2:
-                return thirdImageView;
-            case 3:
-                return fourthImageView;
-            case 4:
-                return fifthImageView;
-            default:
-                return null;
-        }
-    }
-
-    private int getDrawableIdBasedIndex(int index) {
-        switch (index) {
-            case 0:
-                return R.drawable.home_24;
-            case 1:
-                return R.drawable.near_me_24;
-            case 2:
-                return R.drawable.magnify_24;
-            case 3:
-                return R.drawable.heart_24;
-            case 4:
-                return R.drawable.pencil_24;
-            default:
-                return -1;
-        }
-    }
-
-    private void runAnimationOnClickItem() {
-        setFloatingActionButtonIconWithColor();
-        invalidate();
-        if (frontMoveSelectedItemBackgroundAnimator != null)
-            frontMoveSelectedItemBackgroundAnimator.start();
-
-        if (moveDeSelectedItemAnimator != null)
-            moveDeSelectedItemAnimator.start();
-
-        if (moveSelectedItemAnimator != null)
-            moveSelectedItemAnimator.start();
-
-        if (lastSelectedImageView != null)
-            lastSelectedImageView.startAnimation(lastSelectedViewReSizeAnimation);
-
-        if (newSelectedImageView != null)
-            newSelectedImageView.startAnimation(newSelectedViewReSizeAnimation);
-    }
-
-    private void setImageSizeAnimation(View view, int duration, boolean finalSizeStatus) {
-        if (finalSizeStatus == SET_SMALLER_SIZE) {
-            lastSelectedViewReSizeAnimation = new ResizeAnimation(view, (int) (view.getWidth() * 0.75), (int) (view.getHeight() * 0.75));
-            lastSelectedViewReSizeAnimation.setDuration(duration);
-        } else if (finalSizeStatus == SET_BIGGER_SIZE) {
-            newSelectedViewReSizeAnimation = new ResizeAnimation(view, (int) (view.getWidth() * 100 / 75), (int) (view.getHeight() * 100 / 75));
-            newSelectedViewReSizeAnimation.setDuration(duration);
-        }
-    }
-
-    /**
-     * This method select default item from bottom navigation and calculate offset from left of screen for future use
-     *
-     * @param defaultSelectedItemPosition An int value as index of default selected item start from zero to last index
-     * @return void
-     */
-    public void initDefaultItem(int defaultSelectedItemPosition) {
-        newSelectedIndex = defaultSelectedItemPosition;
-        prepareSelectItemAnimation();
-        runAnimationOnClickItem();
-        selectedItemHorizontallyOffset = (int) (imgNavigationBackgroundSelectedItem.getLeft() - 2 * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
-    }
-
-    /**
-     * This method converts dp unit to equivalent pixels, depending on device density.
-     *
-     * @param dp      A value in dp (density independent pixels) unit. Which we need to convert into pixels
-     * @param context Context to get resources and device specific display metrics
-     * @return A float value to represent px equivalent to dp depending on device density
-     */
-    public int convertDpToPx(Context context, float dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
-    }
-
-    public void setItemExpandable(int index, boolean itemExpandable) {
-        switch (index) {
-            case 0:
-                this.firstItemExpandable = itemExpandable;
-                break;
-            case 1:
-                this.secondItemExpandable = itemExpandable;
-                break;
-            case 2:
-                this.thirdItemExpandable = itemExpandable;
-                break;
-            case 3:
-                this.fourthItemExpandable = itemExpandable;
-                break;
-            case 4:
-                this.fifthItemExpandable = itemExpandable;
-                break;
-        }
-    }
-
-    public int setItemExpandableLayout(int index, int layoutId) {
-
-        switch (index) {
-            case 0:
-                if (this.firstItemExpandable) {
-                    bottomFrameLayout.removeAllViews();
-                    bottomFrameLayout.addView(getViewById(layoutId));
-                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
-                } else
-                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
-            case 1:
-                if (this.secondItemExpandable) {
-                    bottomFrameLayout.removeAllViews();
-                    bottomFrameLayout.addView(getViewById(layoutId));
-                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
-                } else
-                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
-            case 2:
-                if (this.thirdItemExpandable) {
-                    bottomFrameLayout.removeAllViews();
-                    bottomFrameLayout.addView(getViewById(layoutId));
-                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
-                } else
-                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
-            case 3:
-                if (this.fourthItemExpandable) {
-                    bottomFrameLayout.removeAllViews();
-                    bottomFrameLayout.addView(getViewById(layoutId));
-                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
-                } else
-                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
-            case 4:
-                if (this.fifthItemExpandable) {
-                    bottomFrameLayout.removeAllViews();
-                    bottomFrameLayout.addView(getViewById(layoutId));
-                    return ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY;
-                } else
-                    return SELECTED_ITEM_EXPANDABLE_DISABLE;
-            default:
-                return SELECTED_ITEM_EXPANDABLE_FAILED;
-        }
-    }
-
-    private void setFloatingActionButtonIconWithColor() {
-
-        VectorChildFinder vector;
-
-        if (lastSelectedIndex != -1) {
-            vector = new VectorChildFinder(context, getDrawableIdBasedIndex(lastSelectedIndex), (ImageView) lastSelectedImageView);
-            vector.findPathByName("main_path").setFillColor(getResources().getColor(R.color.fasation_inactive_item_icon_color));
-        }
-
-        vector = new VectorChildFinder(context, getDrawableIdBasedIndex(newSelectedIndex), (ImageView) newSelectedImageView);
-        vector.findPathByName("main_path").setFillColor(getResources().getColor(R.color.fasation_active_item_icon_color));
     }
 
     @Override
@@ -448,6 +169,7 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
                     prepareSelectedItemBackgroundAnimation();
                     runAnimationOnClickItem();
                     invalidate();
+                    getBadgeImageViewBasedIndex(3).setVisibility(VISIBLE);
                 }
                 break;
             case R.id.img_navigation_items_second:
@@ -484,6 +206,7 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
                     prepareSelectedItemBackgroundAnimation();
                     runAnimationOnClickItem();
                     invalidate();
+                    getBadgeImageViewBasedIndex(newSelectedIndex).setVisibility(GONE);
                 }
                 break;
             case R.id.img_navigation_items_fifth:
@@ -499,6 +222,266 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
                 }
                 break;
         }
+    }
+    //endregion Main Callbacks
+
+    //region Declare Methods
+    private void init(final Context context) {
+
+        rootView = inflate(context, R.layout.fasation_bottom_navigation, this);
+        emptyRelativeLayout = rootView.findViewById(R.id.empty_layout);
+        centerContent = buildBezierView();
+
+        firstCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_first);
+        secondCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_second);
+        thirdCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_third);
+        fourthCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_fourth);
+        fifthCustomItemView = rootView.findViewById(R.id.ctl_navigation_items_fifth);
+
+        imgNavigationBackgroundSelectedItem = rootView.findViewById(R.id.img_navigation_background_selected_item);
+
+        firstImageView = rootView.findViewById(R.id.img_navigation_items_first);
+        secondImageView = rootView.findViewById(R.id.img_navigation_items_second);
+        thirdImageView = rootView.findViewById(R.id.img_navigation_items_third);
+        fourthImageView = rootView.findViewById(R.id.img_navigation_items_fourth);
+        fifthImageView = rootView.findViewById(R.id.img_navigation_items_fifth);
+
+        firstBadgeImageView = rootView.findViewById(R.id.img_badge_navigation_items_first);
+        secondBadgeImageView = rootView.findViewById(R.id.img_badge_navigation_items_second);
+        thirdBadgeImageView = rootView.findViewById(R.id.img_badge_navigation_items_third);
+        fourthBadgeImageView = rootView.findViewById(R.id.img_badge_navigation_items_fourth);
+        fifthBadgeImageView = rootView.findViewById(R.id.img_badge_navigation_items_fifth);
+
+        firstCustomItemView.setOnClickListener(this);
+        secondCustomItemView.setOnClickListener(this);
+        thirdCustomItemView.setOnClickListener(this);
+        fourthCustomItemView.setOnClickListener(this);
+//        fifthCustomItemView.setOnClickListener(this);
+
+        firstImageView.setOnClickListener(this);
+        secondImageView.setOnClickListener(this);
+        thirdImageView.setOnClickListener(this);
+        fourthImageView.setOnClickListener(this);
+//        fifthImageView.setOnClickListener(this);
+    }
+
+    /**
+     * This method select default item from bottom navigation and calculate offset from left of screen for future use
+     *
+     * @param defaultSelectedItemPosition An int value as index of default selected item start from zero to last index
+     * @return void
+     */
+    public void initDefaultItem(int defaultSelectedItemPosition) {
+        newSelectedIndex = defaultSelectedItemPosition;
+        prepareSelectItemAnimation();
+        runAnimationOnClickItem();
+        selectedItemHorizontallyOffset = (int) (imgNavigationBackgroundSelectedItem.getLeft() - 2 * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
+    }
+
+    private void prepareDeSelectItemAnimation() {
+
+        lastSelectedImageView = getImageViewViewBasedIndex(lastSelectedIndex);
+        lastSelectedParentView = getParentViewBasedIndex(lastSelectedIndex);
+
+        if (lastSelectedParentView != null) {
+            if (moveDeSelectedItemAnimator != null && moveDeSelectedItemAnimator.isRunning())
+                moveDeSelectedItemAnimator.end();
+
+            final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) lastSelectedParentView.getLayoutParams();
+            moveDeSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset));
+            moveDeSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    mLayoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
+                    lastSelectedParentView.requestLayout();
+                }
+            });
+            moveDeSelectedItemAnimator.setDuration(500);
+
+            setImageSizeAnimation(lastSelectedImageView, 200, SET_SMALLER_SIZE);
+        }
+    }
+
+    private void prepareSelectItemAnimation() {
+
+        newSelectedImageView = getImageViewViewBasedIndex(newSelectedIndex);
+        newSelectedParentView = getParentViewBasedIndex(newSelectedIndex);
+
+        if (newSelectedParentView != null) {
+            if (moveSelectedItemAnimator != null && moveSelectedItemAnimator.isRunning())
+                moveSelectedItemAnimator.end();
+
+            final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) newSelectedParentView.getLayoutParams();
+            moveSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset) + convertDpToPx(context, selectedItemOffset));
+            moveSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    mLayoutParams.bottomMargin = (Integer) valueAnimator.getAnimatedValue();
+                    newSelectedParentView.requestLayout();
+                }
+            });
+            moveSelectedItemAnimator.setDuration(500);
+
+            setImageSizeAnimation(newSelectedImageView, 200, SET_BIGGER_SIZE);
+        }
+    }
+
+    private void prepareSelectedItemBackgroundAnimation() {
+
+        int xCurrentPosition = imgNavigationBackgroundSelectedItem.getLeft();
+        int xNewPosition = (int) (selectedItemHorizontallyOffset + newSelectedIndex * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
+
+        moveSelectedItemBackgroundAnimator = ObjectAnimator.ofFloat(imgNavigationBackgroundSelectedItem, "translationX", xNewPosition - xCurrentPosition);
+        moveSelectedItemBackgroundAnimator.setDuration(200);
+    }
+
+    private void setImageSizeAnimation(View view, int duration, boolean finalSizeStatus) {
+        if (finalSizeStatus == SET_SMALLER_SIZE) {
+            lastSelectedViewReSizeAnimation = new ResizeAnimation(view, convertDpToPx(context, defaultItemIconSize), convertDpToPx(context, defaultItemIconSize));
+            lastSelectedViewReSizeAnimation.setDuration(duration);
+        } else if (finalSizeStatus == SET_BIGGER_SIZE) {
+            newSelectedViewReSizeAnimation = new ResizeAnimation(view, convertDpToPx(context, defaultItemIconSize) * 100 / 75, convertDpToPx(context, defaultItemIconSize) * 100 / 75);
+            newSelectedViewReSizeAnimation.setDuration(duration);
+        }
+    }
+
+    private void runAnimationOnClickItem() {
+        setItemsIconColor();
+        invalidate();
+        if (moveSelectedItemBackgroundAnimator != null)
+            moveSelectedItemBackgroundAnimator.start();
+
+        if (moveDeSelectedItemAnimator != null)
+            moveDeSelectedItemAnimator.start();
+
+        if (moveSelectedItemAnimator != null)
+            moveSelectedItemAnimator.start();
+
+        if (lastSelectedImageView != null)
+            lastSelectedImageView.startAnimation(lastSelectedViewReSizeAnimation);
+
+        if (newSelectedImageView != null)
+            newSelectedImageView.startAnimation(newSelectedViewReSizeAnimation);
+    }
+
+    private View getParentViewBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return firstCustomItemView;
+            case 1:
+                return secondCustomItemView;
+            case 2:
+                return thirdCustomItemView;
+            case 3:
+                return fourthCustomItemView;
+            case 4:
+                return fifthCustomItemView;
+            default:
+                return null;
+        }
+    }
+
+    private View getBadgeImageViewBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return firstBadgeImageView;
+            case 1:
+                return secondBadgeImageView;
+            case 2:
+                return thirdBadgeImageView;
+            case 3:
+                return fourthBadgeImageView;
+            case 4:
+                return fifthBadgeImageView;
+            default:
+                return null;
+        }
+    }
+
+    private ImageView getImageViewViewBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return firstImageView;
+            case 1:
+                return secondImageView;
+            case 2:
+                return thirdImageView;
+            case 3:
+                return fourthImageView;
+            case 4:
+                return fifthImageView;
+            default:
+                return null;
+        }
+    }
+
+    private int getDrawableIdBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return R.drawable.ic_layer;
+            case 1:
+                return R.drawable.ic_route;
+            case 2:
+                return R.drawable.ic_search;
+            case 3:
+                return R.drawable.ic_notification;
+            case 4:
+                return R.drawable.ic_drawer_menu;
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp      A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public int convertDpToPx(Context context, float dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
+    }
+
+    private void setItemsIconColor() {
+
+        VectorChildFinder vector;
+
+        if (lastSelectedIndex != -1) {
+            vector = new VectorChildFinder(context, getDrawableIdBasedIndex(lastSelectedIndex), (ImageView) lastSelectedImageView);
+            vector.findPathByName("main_path").setFillColor(getResources().getColor(R.color.fasation_bottom_navigation_inactive_item_icon_color));
+        }
+
+        vector = new VectorChildFinder(context, getDrawableIdBasedIndex(newSelectedIndex), (ImageView) newSelectedImageView);
+        vector.findPathByName("main_path").setFillColor(getResources().getColor(R.color.fasation_bottom_navigation_active_item_icon_color));
+    }
+
+    /**
+     * Creating bezier view with params
+     *
+     * @return created bezier view
+     */
+    private BezierView buildBezierView() {
+        BezierView bezierView = new BezierView(context, ContextCompat.getColor(context, R.color.fasation_bottom_navigation_background_color));
+        bezierView.build(bezierWidth, bezierHeight, false);
+        return bezierView;
+    }
+
+    public void onDestroy() {
+        if (moveSelectedItemBackgroundAnimator != null)
+            moveSelectedItemBackgroundAnimator.end();
+
+        if (moveDeSelectedItemAnimator != null)
+            moveDeSelectedItemAnimator.end();
+
+        if (moveSelectedItemAnimator != null)
+            moveSelectedItemAnimator.end();
+
+        if (lastSelectedImageView != null && lastSelectedImageView.getAnimation() != null)
+            lastSelectedImageView.getAnimation().cancel();
+
+        if (newSelectedImageView != null && newSelectedImageView.getAnimation() != null)
+            newSelectedImageView.getAnimation().cancel();
     }
     //endregion Declare Methods
 
