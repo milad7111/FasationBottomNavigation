@@ -19,8 +19,10 @@ package com.example.fasationbottomnavigation;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.widget.RelativeLayout;
 
@@ -37,7 +39,6 @@ class BezierView extends RelativeLayout {
 
     private Context context;
     private boolean isLinear = false;
-
 
     BezierView(Context context, int backgroundColor) {
         super(context);
@@ -81,7 +82,7 @@ class BezierView extends RelativeLayout {
             int x3 = startX + bezierWidth / 2, y3 = startY + offsetY;
 
             int x4 = (int) (startX + bezierWidth / 4.0 * 3 + 4 * offsetX), y4 = startY + offsetY;
-            int x5 = startX + bezierWidth * 3 / 4 + 3 * offsetX, y5 = startY + bezierHeight;
+            int x5 = startX + bezierWidth * 3 / 4 + 4 * offsetX, y5 = startY + bezierHeight;
 
             path.cubicTo(x1, y1, x2, y2, x3, y3);
             path.cubicTo(x4, y4, x5, y5, endPointX, endPointY);
@@ -127,18 +128,6 @@ class BezierView extends RelativeLayout {
 
     public void setStartY(int yPosition) {
         startY = yPosition;
-    }
-
-    public Path getPath(){
-        return path;
-    }
-
-    public int xCoordinate() {
-        return startPointX;
-    }
-
-    public int yCoordinate() {
-        return startY;
     }
 }
 

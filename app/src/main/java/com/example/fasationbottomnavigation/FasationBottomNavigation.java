@@ -4,17 +4,14 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.devs.vectorchildfinder.VectorChildFinder;
 
@@ -24,24 +21,45 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
     private static final int NOT_DEFINED = -777;
     private static final boolean SET_BIGGER_SIZE = true;
     private static final boolean SET_SMALLER_SIZE = false;
-    private static final int ITEM_EXPANDABLE_LAYOUT_ADDED_SUCCESSFULLY = 1000;
-    private static final int SELECTED_ITEM_EXPANDABLE_DISABLE = 2000;
-    private static final int SELECTED_ITEM_EXPANDABLE_FAILED = 3000;
     //endregion Declare Constants
 
     //region Declare Variables
-    private int selectedItemOffset = 16; //dp
+    private int emptyRelativeLayoutHeight = 40; //dp
+    private int defaultItemPadding = 8; //dp
     private int defaultItemOffset = 0; //dp
     private int selectedItemHorizontallyOffset;
+
+    private float imageBiggerScale = 100.0f / 80;
 
     private int defaultItemIconSize = 24; //dp
 
     private int defaultSelectedItemIndex = 2;
+    private int drawableSelectedItemIndex = 2;
     private int lastSelectedIndex = -1;
     private int newSelectedIndex = defaultSelectedItemIndex;
 
     private int bezierWidth = 0;
     private int bezierHeight = 0;
+
+    private int firstItemIconWidth = 22; //dp
+    private int firstItemIconHeight = defaultItemIconSize; //dp
+    private float firstItemOffset = emptyRelativeLayoutHeight - 1 * defaultItemPadding - firstItemIconHeight * imageBiggerScale / 2; //dp
+
+    private int secondItemIconWidth = 24; //dp
+    private int secondItemIconHeight = defaultItemIconSize; //dp
+    private float secondItemOffset = emptyRelativeLayoutHeight - 1 * defaultItemPadding - secondItemIconHeight * imageBiggerScale / 2; //dp
+
+    private int thirdItemIconWidth = defaultItemIconSize; //dp
+    private int thirdItemIconHeight = defaultItemIconSize; //dp
+    private float thirdItemOffset = emptyRelativeLayoutHeight - 1 * defaultItemPadding - thirdItemIconHeight * imageBiggerScale / 2; //dp
+
+    private int fourthItemIconWidth = 21; //dp
+    private int fourthItemIconHeight = defaultItemIconSize; //dp
+    private float fourthItemOffset = emptyRelativeLayoutHeight - 1 * defaultItemPadding - fourthItemIconHeight * imageBiggerScale / 2; //dp
+
+    private int fifthItemIconWidth = defaultItemIconSize; //dp
+    private int fifthItemIconHeight = 18; //dp
+    private float fifthItemOffset = emptyRelativeLayoutHeight - 1 * defaultItemPadding - fifthItemIconHeight * imageBiggerScale / 2; //dp
 
     private double centerMainWidth = 0.90;
     private double leftMainWidth = (1.0 - centerMainWidth) / 2.0;
@@ -92,6 +110,7 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
 
     private RelativeLayout emptyRelativeLayout;
     private BezierView centerContent;
+    private FasationBottomNavigationItemsClickListener listener;
     //endregion Declare Views
 
     //region Custom Attributes
@@ -110,6 +129,13 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
     private int fasation_inactive_item_icon_color = NOT_DEFINED;
 
     private int fasation_item_text_size = NOT_DEFINED;
+
+    private boolean firstItemSolidStatus = false;
+    private boolean secondItemSolidStatus = false;
+    private boolean thirdItemSolidStatus = false;
+    private boolean fourthItemSolidStatus = false;
+    private boolean fifthItemSolidStatus = false;
+    private int horizontallyOffset;
     //endregion Custom Attributes
 
     //region Constructor
@@ -135,23 +161,15 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
 
         if (!defaultItemSelectedStatus)
             initDefaultItem(defaultSelectedItemIndex);
-
         defaultItemSelectedStatus = true;
 
-        if (newSelectedIndex != -1) {
-            bezierWidth = (int) (centerMainWidth * emptyRelativeLayout.getWidth() / 5);
-            bezierHeight = getHeight() - emptyRelativeLayout.getHeight() - convertDpToPx(context, 8);
+        drawSelectedItemBackground(canvas, drawableSelectedItemIndex);
+    }
 
-            centerContent.setWidth(bezierWidth);
-            centerContent.setHeight(bezierHeight);
-            centerContent.setStartY(convertDpToPx(context, 8));
-
-            int horizontallyOffset = (int) (leftMainWidth * emptyRelativeLayout.getWidth());
-
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            centerContent.setStartX(horizontallyOffset + newSelectedIndex * bezierWidth);
+    private void drawSelectedItemBackground(Canvas canvas, int index) {
+        if (index != -1 && !isItemSolid(index)) {
+            centerContent.setStartX(horizontallyOffset + index * bezierWidth);
             centerContent.draw(canvas);
-
             prepareSelectedItemBackgroundAnimation();
         }
     }
@@ -161,65 +179,23 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
         switch (view.getId()) {
             case R.id.img_navigation_items_first:
             case R.id.ctl_navigation_items_first:
-                if (newSelectedIndex != 0) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 0;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation();
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                    getBadgeImageViewBasedIndex(3).setVisibility(VISIBLE);
-                }
+                handleItemClick(0);
                 break;
             case R.id.img_navigation_items_second:
             case R.id.ctl_navigation_items_second:
-                if (newSelectedIndex != 1) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 1;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation();
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                }
+                handleItemClick(1);
                 break;
             case R.id.img_navigation_items_third:
             case R.id.ctl_navigation_items_third:
-                if (newSelectedIndex != 2) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 2;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation();
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                }
+                handleItemClick(2);
                 break;
             case R.id.img_navigation_items_fourth:
             case R.id.ctl_navigation_items_fourth:
-                if (newSelectedIndex != 3) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 3;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation();
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                    getBadgeImageViewBasedIndex(newSelectedIndex).setVisibility(GONE);
-                }
+                handleItemClick(3);
                 break;
             case R.id.img_navigation_items_fifth:
             case R.id.ctl_navigation_items_fifth:
-                if (newSelectedIndex != 4) {
-                    lastSelectedIndex = newSelectedIndex;
-                    newSelectedIndex = 4;
-                    prepareDeSelectItemAnimation();
-                    prepareSelectItemAnimation();
-                    prepareSelectedItemBackgroundAnimation();
-                    runAnimationOnClickItem();
-                    invalidate();
-                }
+                handleItemClick(4);
                 break;
         }
     }
@@ -256,13 +232,13 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
         secondCustomItemView.setOnClickListener(this);
         thirdCustomItemView.setOnClickListener(this);
         fourthCustomItemView.setOnClickListener(this);
-//        fifthCustomItemView.setOnClickListener(this);
+        fifthCustomItemView.setOnClickListener(this);
 
         firstImageView.setOnClickListener(this);
         secondImageView.setOnClickListener(this);
         thirdImageView.setOnClickListener(this);
         fourthImageView.setOnClickListener(this);
-//        fifthImageView.setOnClickListener(this);
+        fifthImageView.setOnClickListener(this);
     }
 
     /**
@@ -274,8 +250,42 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
     public void initDefaultItem(int defaultSelectedItemPosition) {
         newSelectedIndex = defaultSelectedItemPosition;
         prepareSelectItemAnimation();
+        setItemsIconColor();
         runAnimationOnClickItem();
         selectedItemHorizontallyOffset = (int) (imgNavigationBackgroundSelectedItem.getLeft() - 2 * emptyRelativeLayout.getWidth() * centerMainWidth / 5);
+
+        bezierWidth = (int) (centerMainWidth * emptyRelativeLayout.getWidth() / 5);
+        bezierHeight = getHeight() - emptyRelativeLayout.getHeight() - convertDpToPx(context, 8);
+
+        centerContent.setWidth(bezierWidth);
+        centerContent.setHeight(bezierHeight);
+        centerContent.setStartY(convertDpToPx(context, 8));
+
+        horizontallyOffset = (int) (leftMainWidth * emptyRelativeLayout.getWidth());
+    }
+
+    private void handleItemClick(int selectedItemIndex) {
+        if (newSelectedIndex != selectedItemIndex) {
+            if (!isItemSolid(newSelectedIndex))
+                lastSelectedIndex = newSelectedIndex;
+
+            newSelectedIndex = selectedItemIndex;
+
+            if (!isItemSolid(newSelectedIndex)) {
+                drawableSelectedItemIndex = selectedItemIndex;
+                handleItemAnimations();
+            }
+        }
+
+        listener.onFasationBottomNavigationItemClick(newSelectedIndex);
+    }
+
+    private void handleItemAnimations() {
+        prepareDeSelectItemAnimation();
+        prepareSelectItemAnimation();
+        prepareSelectedItemBackgroundAnimation();
+        setItemsIconColor();
+        runAnimationOnClickItem();
     }
 
     private void prepareDeSelectItemAnimation() {
@@ -312,7 +322,7 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
                 moveSelectedItemAnimator.end();
 
             final ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) newSelectedParentView.getLayoutParams();
-            moveSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, defaultItemOffset) + convertDpToPx(context, selectedItemOffset));
+            moveSelectedItemAnimator = ValueAnimator.ofInt(mLayoutParams.bottomMargin, convertDpToPx(context, getSelectedItemOffsetBasedIndex(newSelectedIndex)));
             moveSelectedItemAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -337,17 +347,17 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
 
     private void setImageSizeAnimation(View view, int duration, boolean finalSizeStatus) {
         if (finalSizeStatus == SET_SMALLER_SIZE) {
-            lastSelectedViewReSizeAnimation = new ResizeAnimation(view, convertDpToPx(context, defaultItemIconSize), convertDpToPx(context, defaultItemIconSize));
+            lastSelectedViewReSizeAnimation = new ResizeAnimation(view,
+                    convertDpToPx(context, getIconWidthBasedIndex(lastSelectedIndex)), convertDpToPx(context, getIconHeightBasedIndex(lastSelectedIndex)));
             lastSelectedViewReSizeAnimation.setDuration(duration);
         } else if (finalSizeStatus == SET_BIGGER_SIZE) {
-            newSelectedViewReSizeAnimation = new ResizeAnimation(view, convertDpToPx(context, defaultItemIconSize) * 100 / 75, convertDpToPx(context, defaultItemIconSize) * 100 / 75);
+            newSelectedViewReSizeAnimation = new ResizeAnimation(view,
+                    (int) (convertDpToPx(context, getIconWidthBasedIndex(newSelectedIndex)) * imageBiggerScale), (int) (convertDpToPx(context, getIconHeightBasedIndex(newSelectedIndex)) * imageBiggerScale));
             newSelectedViewReSizeAnimation.setDuration(duration);
         }
     }
 
     private void runAnimationOnClickItem() {
-        setItemsIconColor();
-        invalidate();
         if (moveSelectedItemBackgroundAnimator != null)
             moveSelectedItemBackgroundAnimator.start();
 
@@ -362,6 +372,20 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
 
         if (newSelectedImageView != null)
             newSelectedImageView.startAnimation(newSelectedViewReSizeAnimation);
+    }
+
+    public void enableBadgeOnItem(int badgeIndex) throws NullPointerException {
+        if (getBadgeImageViewBasedIndex(badgeIndex) != null)
+            getBadgeImageViewBasedIndex(badgeIndex).setVisibility(VISIBLE);
+        else
+            throw new NullPointerException("badgeIndex is out of bound. badgeIndex must be in range of bottom sheet indexes.");
+    }
+
+    public void disableBadgeOnItem(int badgeIndex) throws NullPointerException {
+        if (getBadgeImageViewBasedIndex(badgeIndex) != null)
+            getBadgeImageViewBasedIndex(badgeIndex).setVisibility(GONE);
+        else
+            throw new NullPointerException("badgeIndex is out of bound. badgeIndex must be in range of bottom sheet indexes.");
     }
 
     private View getParentViewBasedIndex(int index) {
@@ -395,6 +419,57 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
                 return fifthBadgeImageView;
             default:
                 return null;
+        }
+    }
+
+    private int getIconWidthBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return firstItemIconWidth;
+            case 1:
+                return secondItemIconWidth;
+            case 2:
+                return thirdItemIconWidth;
+            case 3:
+                return fourthItemIconWidth;
+            case 4:
+                return fifthItemIconWidth;
+            default:
+                return -1;
+        }
+    }
+
+    private int getIconHeightBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return firstItemIconHeight;
+            case 1:
+                return secondItemIconHeight;
+            case 2:
+                return thirdItemIconHeight;
+            case 3:
+                return fourthItemIconHeight;
+            case 4:
+                return fifthItemIconHeight;
+            default:
+                return -1;
+        }
+    }
+
+    private float getSelectedItemOffsetBasedIndex(int index) {
+        switch (index) {
+            case 0:
+                return firstItemOffset;
+            case 1:
+                return secondItemOffset;
+            case 2:
+                return thirdItemOffset;
+            case 3:
+                return fourthItemOffset;
+            case 4:
+                return fifthItemOffset;
+            default:
+                return -1;
         }
     }
 
@@ -483,7 +558,48 @@ public class FasationBottomNavigation extends ConstraintLayout implements View.O
         if (newSelectedImageView != null && newSelectedImageView.getAnimation() != null)
             newSelectedImageView.getAnimation().cancel();
     }
+
+    public void onItemClickListener(@NonNull FasationBottomNavigationItemsClickListener listener) {
+        this.listener = listener;
+
+        if (defaultItemSelectedStatus)
+            this.listener.onFasationBottomNavigationItemClick(newSelectedIndex);
+    }
     //endregion Declare Methods
+
+    //region Getter & Setter
+    public void setItemSolidStatus(int index, boolean solidStatus) {
+        switch (index) {
+            case 0:
+                firstItemSolidStatus = solidStatus;
+            case 1:
+                secondItemSolidStatus = solidStatus;
+            case 2:
+                thirdItemSolidStatus = solidStatus;
+            case 3:
+                fourthItemSolidStatus = solidStatus;
+            case 4:
+                fifthItemSolidStatus = solidStatus;
+        }
+    }
+
+    public boolean isItemSolid(int index) {
+        switch (index) {
+            case 0:
+                return firstItemSolidStatus;
+            case 1:
+                return secondItemSolidStatus;
+            case 2:
+                return thirdItemSolidStatus;
+            case 3:
+                return fourthItemSolidStatus;
+            case 4:
+                return fifthItemSolidStatus;
+            default:
+                return false;
+        }
+    }
+    //endregion Getter & Setter
 
 //        if (attrs != null) {
 //            Resources resources = getResources();

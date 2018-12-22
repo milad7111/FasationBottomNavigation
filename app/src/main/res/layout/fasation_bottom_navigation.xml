@@ -21,14 +21,14 @@
         android:id="@+id/img_navigation_background_selected_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
+        android:background="@color/transparent"
         android:clickable="true"
         android:contentDescription="@string/image_view_content_description_img_navigation_background_selected_item"
         android:focusable="true"
         android:src="@drawable/background_selected_item"
         app:layout_constraintBottom_toTopOf="@id/empty_layout"
-        app:layout_constraintEnd_toStartOf="@+id/ctl_navigation_items_fourth"
-        app:layout_constraintStart_toEndOf="@+id/ctl_navigation_items_second"
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
+        app:layout_constraintStart_toEndOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="@id/empty_layout" />
 
     <android.support.constraint.ConstraintLayout
@@ -268,12 +268,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="1" />
-
-    <!--<android.support.constraint.Guideline-->
-        <!--android:id="@+id/guideline8"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="horizontal"-->
-        <!--app:layout_constraintGuide_end="40dp" />-->
 
 </android.support.constraint.ConstraintLayout>
