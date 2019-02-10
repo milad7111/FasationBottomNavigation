@@ -14,7 +14,7 @@ public class ResizeAnimation extends Animation {
     final int startHeight;
     final int targetHeight;
 
-    public ResizeAnimation(View view, int targetWidth, int targetHeight) {
+    ResizeAnimation(View view, int targetWidth, int targetHeight) {
         this.view = view;
 
         this.startWidth = view.getWidth();
