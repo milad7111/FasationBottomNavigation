@@ -1,4 +1,4 @@
-package com.example.fasationbottomnavigation;
+package fasation.bottom.navigation;
 
 import org.junit.Test;
 

@@ -8,7 +8,6 @@
     <color name="fasation_bottom_navigation_background_color">#D9FFFFFF</color>
     <color name="fasation_bottom_navigation_active_item_background_color_top">#F489A9</color>
     <color name="fasation_bottom_navigation_active_item_background_color_bottom">#FD575B</color>
-    <color name="fasation_bottom_navigation_inactive_item_background_color">#00FFFFFF</color>
     <color name="fasation_bottom_navigation_active_item_icon_color">#fff</color>
     <color name="fasation_bottom_navigation_inactive_item_icon_color">#616161</color>
     <color name="fasation_bottom_navigation_badge_text_color">#FFFFFF</color>

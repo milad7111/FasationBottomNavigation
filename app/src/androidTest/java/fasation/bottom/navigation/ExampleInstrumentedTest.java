@@ -1,4 +1,4 @@
-package com.example.fasationbottomnavigation;
+package fasation.bottom.navigation;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
